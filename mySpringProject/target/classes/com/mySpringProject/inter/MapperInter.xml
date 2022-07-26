@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mySpringProject.inter.MapperInter">
+
+<!-- auth -->
+	<select id="isMemberr" parameterType="com.mySpringProject.beans.AuthB" resultType="string">
+		SELECT PMB_PASSWORD FROM PMB WHERE PMB_CODE = #{pmbCode} 
+	</select>
+	<select id="isAccess" parameterType="com.mySpringProject.beans.AuthB" resultType="string">
+		SELECT ASL_PUBLICIP || ':' || ASL_PRIVATEIP
+		FROM ASL
+		WHERE TO_CHAR(ASL_DATE, 'YYMMDD') = TO_CHAR(SYSDATE, 'YYMMDD') AND ASL_PMBCODE = #{pmbCode}
+		GROUP BY ASL_PMBCODE, ASL_PUBLICIP, ASL_PRIVATEIP
+		HAVING SUM(ASL_ACTION) = 1
+	</select>	
+	<insert id="insAsl" parameterType="com.mySpringProject.beans.AuthB">
+		INSERT INTO ASL(ASL_PMBCODE, ASL_DATE, ASL_PUBLICIP, ASL_PRIVATEIP, ASL_ACTION)
+		VALUES(#{pmbCode}, DEFAULT, #{publicIp}, #{privateIp}, #{action})
+	</insert>
+	<select id="getAccessInfo" parameterType="com.mySpringProject.beans.AuthB" resultType="com.mySpringProject.beans.AuthB">
+		SELECT * FROM ACCESSINFO WHERE PMBCODE = ${pmbCode}
+	</select>
+	
+<!-- signup -->
+	<select id="getMaxPmbCode" resultType="string">
+		SELECT NVL(TO_CHAR(TO_NUMBER(MAX(PMB_CODE)) +1), TO_CHAR(SYSDATE, 'YYYYMM')||'01') AS PMBCODE 
+		FROM PMB WHERE SUBSTR(PMB_CODE, 1,6) = TO_CHAR(SYSDATE, 'YYYYMM')	
+	</select>
+	<select id="getLevelList" resultType="com.mySpringProject.beans.AuthB">
+		SELECT MLV_CODE AS MLVCODE, MLV_NAME AS MLVNAME FROM MLV
+	</select>
+	<select id="getClassList" resultType="com.mySpringProject.beans.AuthB">
+		<![CDATA[
+		SELECT CLA_CODE AS CLACODE, CLA_NAME || '[' || CLA_NUM || ']' AS CLANAME FROM CLA
+		]]>
+	</select>	
+	<insert id="regMember" parameterType="com.mySpringProject.beans.AuthB">
+		INSERT INTO PMB(PMB_CODE, PMB_PASSWORD, PMB_NAME, PMB_MLVCODE, PMB_CLACODE, PMB_EMAIL) 
+		VALUES(#{pmbCode}, #{pmbPassword}, #{pmbName}, #{mlvCode}, #{claCode}, #{email})
+	</insert>	
+	
+<!-- project -->
+	<insert id="insProject" parameterType="com.mySpringProject.beans.ProjectB">
+		INSERT INTO PRO(PRO_CODE, PRO_NAME, PRO_COMMENTS, PRO_START, PRO_END, PRO_VISIBLE) 
+		VALUES(#{projectCode}, #{projectName}, #{projectComment}, TO_DATE(#{startDate}, 'YYYY-MM-DD'), TO_DATE(#{endDate}, 'YYYY-MM-DD'), #{isVisible})
+	</insert>	
+	<select id="getMemberList" parameterType="com.mySpringProject.beans.AuthB" resultType="com.mySpringProject.beans.AuthB">
+		SELECT * FROM MEMBERLIST
+	</select>	
+	<update id="insProjectMembers" parameterType="com.mySpringProject.beans.ProjectB">
+		<foreach item="pm" collection="projectMembers" separator=" " open="INSERT ALL" close="SELECT * FROM DUAL">
+		INTO PRM(PRM_PROCODE, PRM_PMBCODE, PRM_POSITION, PRM_ACCEPT)
+		VALUES(#{projectCode}, #{pm.pmbCode}, 'MB', default)
+		</foreach>
+	</update>
+	<insert id="insSelf" parameterType="com.mySpringProject.beans.ProMemB">
+		INSERT INTO PRM(PRM_PROCODE, PRM_PMBCODE, PRM_POSITION, PRM_ACCEPT)
+		VALUES(#{projectCode}, #{pmbCode}, 'MG', 'AC')
+	</insert>	
+<!-- new shit -->
+	<insert id="insAul" parameterType="com.mySpringProject.beans.AulB">
+		INSERT INTO AUL(AUL_SPMBCODE, AUL_RPMBCODE, AUL_INVITEDATE, AUL_EXPIRE, AUL_AUTHRESULT)
+  		VALUES(#{sender},#{recipient},default,5,default)
+	</insert>
+	<select id="isPrm" parameterType="com.mySpringProject.beans.AuthB" resultType="com.mySpringProject.beans.AulB">
+		SELECT * FROM RINVITEINFO WHERE RECIPIENT = #{pmbCode}
+	</select>	
+<!-- newer shit -->	
+	<select id="receivedInvitationInfo" parameterType="com.mySpringProject.beans.AuthB" resultType="com.mySpringProject.beans.AulB">
+		<![CDATA[
+		SELECT 	SENDER, SENDERNAME, RECIPIENT, TO_CHAR(INVITEDATE,'YYYYMMDDHH24MISS') AS INVITEDATE, 
+				TO_CHAR(EXPIREDATE, 'YYYYMMDDHH24MISS') AS EXPIREDATE, AUTHRESULT
+		FROM RINVITEINFO 
+		WHERE RECIPIENT = #{pmbCode} AND INVITEDATE >= (SYSDATE - 1) AND AUTHRESULT = 'NA'
+		]]>
+	</select>
+	<select id="sentInvitationInfo" parameterType="com.mySpringProject.beans.AuthB" resultType="com.mySpringProject.beans.AulB">
+	<![CDATA[
+		SELECT 	SENDER, RECIPIENT, RECIPIENTNAME, TO_CHAR(INVITEDATE,'YYYYMMDDHH24MISS') AS INVITEDATE, 
+				TO_CHAR(EXPIREDATE, 'YYYYMMDDHH24MISS') AS EXPIREDATE, AUTHRESULT, AUTHRESULTNAME
+		FROM SINVITEINFO
+		WHERE SENDER = #{pmbCode} AND INVITEDATE >= (SYSDATE - 2)
+		]]>
+	</select>
+<!-- MYSHIT -->
+	<select id="isInvited" parameterType="com.mySpringProject.beans.AuthB" resultType="string">
+		SELECT COUNT(*) FROM RINVITEINFO WHERE RECIPIENT = #{pmbCode}
+	</select>
+	<update id="updPrm" parameterType="com.mySpringProject.beans.ProMemB">
+		UPDATE PRM
+        SET PRM_ACCEPT= #{isAccept}
+        WHERE PRM_PMBCODE = #{pmbCode} AND PRM_PROCODE= #{projectCode}
+	</update>
+	<select id="getInviteDate" parameterType="com.mySpringProject.beans.AulB" resultType="string">
+		SELECT TO_CHAR(MAX(AUL_INVITEDATE), 'YYYYMMDDHH24MISS') FROM AUL 
+		WHERE AUL_SPMBCODE = #{sender} AND AUL_RPMBCODE = #{recipient} AND AUL_AUTHRESULT = 'NA'
+	</select>
+	<update id="updAul" parameterType="com.mySpringProject.beans.AulB">
+		UPDATE AUL 
+        SET AUL_AUTHRESULT = #{authResult}
+        WHERE AUL_INVITEDATE = TO_DATE(#{inviteDate}, 'YYYYMMDDHH24MISS') AND AUL_SPMBCODE = #{sender} AND AUL_RPMBCODE = #{recipient}
+	</update>
+	<select id="getProjectList" parameterType="com.mySpringProject.beans.AuthB" resultType="com.mySpringProject.beans.ProListB">
+		SELECT*FROM PROJECTLIST2 WHERE PMBCODE = #{pmbCode} AND ISACCEPT = 'AC' AND POSITION = 'MG'      
+	</select>
+	<select id="getProjectMembers" parameterType="com.mySpringProject.beans.ProjectB" resultType="string">
+		<![CDATA[
+		SELECT COUNT(*) FROM PRM INNER JOIN PRO ON PRO_CODE = PRM_PROCODE AND PRM_ACCEPT = 'AC' WHERE PRO_CODE = #{projectCode}
+        ]]>
+	</select>
+</mapper>
+	<!--  <update id="insProjectMembers" parameterType="com.mySpringProject.beans.ProjectB">
+		<foreach item="pm" collection="projectMembers" separator=" " open="INSERT ALL" close="SELECT * FROM DUAL">
+		INTO PRM(PRM_PROCODE, PRM_PMBCODE, PRM_POSITION, PRM_ACCEPT)
+		VALUES(#{projectCode}, #{pm.pmbCode}, 'MB', default)
+		</foreach>
+	</update>-->
+	
