@@ -80,15 +80,15 @@ function createProjectList(projectList) {
 		
 		box.push(createDiv("period" + i, "period", "기간: " + projectList[i].startDate.substr(0,10) + " ~ " + projectList[i].endDate.substr(0,10), null));
 		box.push(createDiv("projectComment" + i, "projectComment", "상세: " + projectList[i].projectComment, null));
-		box.push(createInput("button", "member" + i, null, "btn button", "MEMBERS"));
+		box.push(createInput("button", "member" + i, null, "btn button", "멤버관리"));
 		box[4].addEventListener("click", function(){
 			moveMgr();
 			});
-		box.push(createInput("button", "job" + i, null, "btn button", "JOBS"));
+		box.push(createInput("button", "job" + i, null, "btn button", "업무관리"));
 		box[5].addEventListener("click", function(){
 			moveMgr();
 			});
-		box.push(createInput("button", "progress" + i, null, "btn button", "PROGRESS"));
+		box.push(createInput("button", "progress" + i, null, "btn button", "결과관리"));
 		box[6].addEventListener("click", function(){
 			showProgress();
 			});	

@@ -3,7 +3,16 @@
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.mySpringProject.inter.MapperInter">
-
+	<resultMap id="getProjectInfoHoon" type="com.mySpringProject.beans.ProjectB">
+		<id column="PRO_CODE" property="projectCode" />
+		<result column="PRO_NAME" property="projectName" />
+		<result column="PRO_COMMENTS" property="projectComment" />
+		<result column="PRO_START" property="startDate" />
+		<result column="PRO_END" property="endDate" />
+		<result column="PRO_VISIBLE" property="isVisible" />
+		<collection property="projectMembers" javaType="java.util.ArrayList" column="PRO_CODE" ofType="com.mySpringProject.beans.ProMemB" select="getProjectMembersHoon"></collection>
+	</resultMap>
+	
 <!-- auth -->
 	<select id="isMemberr" parameterType="com.mySpringProject.beans.AuthB" resultType="string">
 		SELECT PMB_PASSWORD FROM PMB WHERE PMB_CODE = #{pmbCode} 
@@ -109,6 +118,18 @@
 		<![CDATA[
 		SELECT COUNT(*) FROM PRM INNER JOIN PRO ON PRO_CODE = PRM_PROCODE AND PRM_ACCEPT = 'AC' WHERE PRO_CODE = #{projectCode}
         ]]>
+	</select>
+		<select id="getProjectHoon" parameterType="com.mySpringProject.beans.AuthB" resultMap="getProjectInfoHoon">
+		SELECT * 
+		FROM PRO 
+		WHERE PRO_CODE IN(SELECT PRM_PROCODE FROM PRM WHERE PRM_PMBCODE = #{pmbCode})
+	</select>
+	<select id="getProjectMembersHoon" resultType="com.mySpringProject.beans.ProMemB">
+		SELECT 	PRM_PMBCODE AS PMBCODE, 
+				PRM_POSITION AS POSITION, 
+				PRM_ACCEPT AS ISACCEPT 
+		FROM PRM 
+		WHERE PRM_PROCODE = #{projectCode}
 	</select>
 </mapper>
 	<!--  <update id="insProjectMembers" parameterType="com.mySpringProject.beans.ProjectB">

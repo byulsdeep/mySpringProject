@@ -42,4 +42,6 @@ public interface MapperInter {
 	public int insSelf(ProMemB pm);
 	public List<ProListB> getProjectList(AuthB ab);
 	public String getProjectMembers(ProjectB pb);
+	
+	public List<ProjectB> getProjectHoon(ProjectB pro);
 }
