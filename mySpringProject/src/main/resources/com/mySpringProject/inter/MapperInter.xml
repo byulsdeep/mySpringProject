@@ -64,6 +64,13 @@
 		VALUES(#{projectCode}, #{pm.pmbCode}, 'MB', default)
 		</foreach>
 	</update>
+	<insert id="insOneByOne" parameterType="com.mySpringProject.beans.ProMemB">
+		
+		INSERT INTO PRM(PRM_PROCODE, PRM_PMBCODE, PRM_POSITION, PRM_ACCEPT)
+		VALUES(#{projectCode}, #{pmbCode}, 'MB', default)
+	
+	</insert>
+	
 	<insert id="insSelf" parameterType="com.mySpringProject.beans.ProMemB">
 		INSERT INTO PRM(PRM_PROCODE, PRM_PMBCODE, PRM_POSITION, PRM_ACCEPT)
 		VALUES(#{projectCode}, #{pmbCode}, 'MG', 'AC')
@@ -73,6 +80,10 @@
 		INSERT INTO AUL(AUL_SPMBCODE, AUL_RPMBCODE, AUL_INVITEDATE, AUL_EXPIRE, AUL_AUTHRESULT)
   		VALUES(#{sender},#{recipient},default,5,default)
 	</insert>
+	<!--  <update id="updAul" parameterType="com.mySpringProject.beans.AulB">
+		 AUL SET AUL_SPMBCODE = #{sender}, AUL_RPMBCODE = #{recipient}, AUL_INVITEDATE, AUL_EXPIRE, AUL_AUTHRESULT)
+  		VALUES(,default,5,default)
+	</update>-->
 	<select id="isPrm" parameterType="com.mySpringProject.beans.AuthB" resultType="com.mySpringProject.beans.AulB">
 		SELECT * FROM RINVITEINFO WHERE RECIPIENT = #{pmbCode}
 	</select>	
@@ -123,7 +134,7 @@
 		SELECT COUNT(*) FROM PRM INNER JOIN PRO ON PRO_CODE = PRM_PROCODE AND PRM_ACCEPT = 'AC' WHERE PRO_CODE = #{projectCode}
         ]]>
 	</select>
-		<select id="getProjectHoon" parameterType="com.mySpringProject.beans.AuthB" resultMap="getProjectInfoHoon">
+	<select id="getProjectHoon" parameterType="com.mySpringProject.beans.AuthB" resultMap="getProjectInfoHoon">
 		SELECT * 
 		FROM PRO 
 		WHERE PRO_CODE IN(SELECT PRM_PROCODE FROM PRM WHERE PRM_PMBCODE = #{pmbCode})
@@ -140,6 +151,14 @@
                 CLANAME
 		FROM PRM INNER JOIN MEMBERLIST ON PRM_PMBCODE = PMBCODE
 		WHERE PRM_PROCODE = #{projectCode}
+	</select>
+	<select id="getProjectMembers2" parameterType="com.mySpringProject.beans.ProjectB" resultMap="getProjectInfoHoon">
+		SELECT * 
+		FROM PRO 
+		WHERE PRO_CODE = #{projectCode}
+	</select>
+	<select id="getProjectMembers3" parameterType="com.mySpringProject.beans.ProMemB" resultType="com.mySpringProject.beans.ProMemB">
+		SELECT PRM_PMBCODE AS PMBCODE, PRM_ACCEPT AS ISACCEPT FROM PRM WHERE PRM_PROCODE = #{projectCode}
 	</select>
 </mapper>
 	<!--  <update id="insProjectMembers" parameterType="com.mySpringProject.beans.ProjectB">

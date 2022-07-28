@@ -78,6 +78,9 @@ public class Project implements ServicesRule{
 			case 5: 
 				this.aaang(model);
 				break;
+			case 6:
+				this.aaaang(model);
+				break;
 			}	
 		}
 	}
@@ -126,13 +129,13 @@ public class Project implements ServicesRule{
 		try {
 			session = (AuthB)this.pu.getAttribute("accessInfo");
 		} catch (Exception e1) {e1.printStackTrace();}
-		
+
 		String page = "project";
 		mav.setViewName(page);
 
 		int result =  this.session.update("insProjectMembers", pb);
 		System.out.println(result);
-		
+
 		ProMemB pm = new ProMemB();
 		pm.setProjectCode(pb.getProjectCode());
 		pm.setPmbCode(session.getPmbCode());
@@ -147,7 +150,7 @@ public class Project implements ServicesRule{
 		String[] inviteDate = new String [(pb.getProjectMembers().size())];
 		String projectCode = pb.getProjectCode();
 		String key = "BDGames";
-		
+
 		MimeMessage mime = mail.createMimeMessage();
 		MimeMessageHelper helper = new MimeMessageHelper(mime,"UTF-8");
 		try {
@@ -157,16 +160,16 @@ public class Project implements ServicesRule{
 
 		AulB aul;
 
-		
+
 		for(int i=0; i < to.length; i++) {
 			to[i] = pb.getProjectMembers().get(i).getEmail();
-			
+
 			aul = new AulB();
 			aul.setSender(session.getPmbCode());
 			aul.setRecipient(pb.getProjectMembers().get(i).getPmbCode());
 			this.session.insert("insAul", aul);
 			inviteDate[i] = this.session.selectOne("getInviteDate", aul);
-			
+
 			try {
 				authCode[i] = this.enc.aesEncode(projectCode + ":" + to[i] + ":" + inviteDate[i] + ":" + aul.getSender(), key);
 				content[i] = "<!DOCTYPE html>\r\n"
@@ -214,33 +217,33 @@ public class Project implements ServicesRule{
 				helper.setTo(to[i]);
 				helper.setText(content[i], true);
 				mail.send(mime);
-		
+
 			} catch (InvalidKeyException | UnsupportedEncodingException | NoSuchAlgorithmException
 					| NoSuchPaddingException | InvalidAlgorithmParameterException | IllegalBlockSizeException
 					| BadPaddingException | MessagingException e) {e.printStackTrace();}
 		}
 	}
-	
+
 	private void ang(ModelAndView mav) {
 		System.out.println("Project/backController/ang");	
 		//mav.addObject("hoonList", hoonList);
 		mav.setViewName("management");
 	}
-	
+
 	private void aang(Model model) {
 		System.out.println("Project/backController/aang");
 		ProjectB pb = (ProjectB)model.getAttribute("projectB");
-		
+
 		List<ProjectB> hoonList = null;
 		AuthB session = null;
-		
+
 		try {
 			session = (AuthB)this.pu.getAttribute("accessInfo");
 		} catch (Exception e) {e.printStackTrace();}
-		
+
 		hoonList = this.session.selectList("getProjectHoon", session);
 		List<ProMemB> ajaxHoonList = new ArrayList<ProMemB>();
-		
+
 		for(int i=0; i < hoonList.size(); i++) {
 			if(hoonList.get(i).getProjectCode().equals(pb.getProjectCode())) {
 				for(int j=0; j < hoonList.get(i).getProjectMembers().size(); j++) {
@@ -250,7 +253,7 @@ public class Project implements ServicesRule{
 					} catch (InvalidKeyException | UnsupportedEncodingException | NoSuchAlgorithmException
 							| NoSuchPaddingException | InvalidAlgorithmParameterException | IllegalBlockSizeException
 							| BadPaddingException e) {e.printStackTrace();}	
-					
+
 					ProMemB pm = new ProMemB();
 					pm.setPmbCode(hoonList.get(i).getProjectMembers().get(j).getPmbCode());
 					pm.setPosition(hoonList.get(i).getProjectMembers().get(j).getPosition());
@@ -264,28 +267,154 @@ public class Project implements ServicesRule{
 				}			
 			}
 		}
-		
-	model.addAttribute("hoonList", ajaxHoonList);
+
+		model.addAttribute("hoonList", ajaxHoonList);
 	}
-	
+
 	@Transactional
 	private void aaang(Model model) {
 		System.out.println("Project/aaang");
 		List<AuthB> memberList = null;
 		AuthB au = null;
 
-			memberList = this.session.selectList("getMemberList");
+		memberList = this.session.selectList("getMemberList");
 
-			for(AuthB ab : memberList) {
-				try {
-					ab.setPmbName(this.enc.aesDecode(ab.getPmbName(), ab.getPmbCode()));
-					ab.setEmail(this.enc.aesDecode(ab.getEmail(), ab.getPmbCode()));
-				} catch (InvalidKeyException | UnsupportedEncodingException | NoSuchAlgorithmException
-						| NoSuchPaddingException | InvalidAlgorithmParameterException | IllegalBlockSizeException
-						| BadPaddingException e) {e.printStackTrace();}
-			}
-		
+		for(AuthB ab : memberList) {
+			try {
+				ab.setPmbName(this.enc.aesDecode(ab.getPmbName(), ab.getPmbCode()));
+				ab.setEmail(this.enc.aesDecode(ab.getEmail(), ab.getPmbCode()));
+			} catch (InvalidKeyException | UnsupportedEncodingException | NoSuchAlgorithmException
+					| NoSuchPaddingException | InvalidAlgorithmParameterException | IllegalBlockSizeException
+					| BadPaddingException e) {e.printStackTrace();}
+		}
+
 		model.addAttribute("EmailList", memberList);
+	}
+
+	@Transactional
+	private void aaaang(Model model) {
+		System.out.println("aaaang");
+		ProjectB pb = ((ProjectB)model.getAttribute("projectB"));
+		AuthB session = null;
+		try {
+			session = (AuthB)this.pu.getAttribute("accessInfo");
+		} catch (Exception e1) {e1.printStackTrace();}
+
+		/*List<ProjectB> hoonList = null;
+		hoonList = this.session.selectList("getProjectMembers2", pb);
+		
+		for(int i = 0; i < hoonList.size(); i++) {
+			for(int j =0; j < hoonList.get(i).getProjectMembers().size(); j++) {
+				for(int k =0; k < pb.getProjectMembers().size(); k++) {
+					if(hoonList.get(i).getProjectMembers().get(j).getPmbCode().equals(pb.getProjectMembers().get(k).getPmbCode())) {
+						hoonList.get(i).getProjectMembers().remove(j);
+					}
+				}
+			}		
+		}
+		
+
+		
+		d("-----------");
+		d(String.valueOf(hoonList.size()));
+		d(String.valueOf(hoonList.get(0).getProjectMembers().size()));
+		
+		for(int i = 0; i < hoonList.size(); i++) {
+			for(int j =0; j < hoonList.get(i).getProjectMembers().size(); j++) {
+				d(hoonList.get(i).getProjectMembers().get(j).getPmbCode());
+			}		
+		}*/
+		
+		for(int i = 0; i < pb.getProjectMembers().size(); i++) {
+			pb.getProjectMembers().get(i).setProjectCode(pb.getProjectCode());
+			this.session.insert("insOneByOne", pb.getProjectMembers().get(i));
+			try {
+				
+			} catch(Exception e) {
+				d("caught one");
+			}	
+		}
+		
+		/*String subject = "[" + pb.getProjectName() + "] 프로젝트 초대장";
+
+		String from = "byulzdeep@outlook.com";
+		String[] to = new String [(pb.getProjectMembers().size())];
+		String[] authCode = new String [(pb.getProjectMembers().size())];
+		String[] content = new String [(pb.getProjectMembers().size())];
+		String[] inviteDate = new String [(pb.getProjectMembers().size())];
+		String projectCode = pb.getProjectCode();
+		String key = "BDGames";
+
+		MimeMessage mime = mail.createMimeMessage();
+		MimeMessageHelper helper = new MimeMessageHelper(mime,"UTF-8");
+		try {
+			helper.setFrom(from);
+			helper.setSubject(subject);
+		} catch (MessagingException e1) {e1.printStackTrace();}
+
+		AulB aul;
+
+		for(int i=0; i < to.length; i++) {
+			to[i] = pb.getProjectMembers().get(i).getEmail();
+
+			aul = new AulB();
+			aul.setSender(session.getPmbCode());
+			aul.setRecipient(pb.getProjectMembers().get(i).getPmbCode());
+			this.session.insert("insAul", aul);
+			inviteDate[i] = this.session.selectOne("getInviteDate", aul);
+
+			try {
+				authCode[i] = this.enc.aesEncode(projectCode + ":" + to[i] + ":" + inviteDate[i] + ":" + aul.getSender(), key);
+				content[i] = "<!DOCTYPE html>\r\n"
+						+ "<html lang=\"en\">\r\n"
+						+ "<head>\r\n"
+						+ "    <meta charset=\"UTF-8\">\r\n"
+						+ "    <meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\">\r\n"
+						+ "    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\r\n"
+						+ "    <title>Document</title>\r\n"
+						+ "</head>\r\n"
+						+ "<style>\r\n"
+						+ "    .center { \r\n"
+						+ "			position:absolute; \r\n"
+						+ "			top:50%; \r\n"
+						+ "			left:50%; \r\n"
+						+ "			transform:translate(-50%, -50%);		 \r\n"
+						+ "		   	text-align:center; \r\n"
+						+ "		   	}\r\n"
+						+ "</style>\r\n"
+						+ "<body>\r\n"
+						+ "    <div class=\"center\">\r\n"
+						+ "        <img src=\"https://blogger.googleusercontent.com/img/a/AVvXsEhlvbsCOUntQY8Dh6NyZ3Wr0-RPlFMOpHLI5SdQOEWUb51fneTu3i4ER8NX0CfDVSQrltk_tnr1o52NTl2sL6iEq3D9c49Y7Py78NrcA2SUt7eMP0kI690xiy9wY_Cm0hLbcGjnZ7faAp2nHcVbcip4pVQ9-HoYnTzTEENAcXo1qHpQlu2cpqtDV-KKtQ\">\r\n"
+						+ "        <h2>\r\n"
+						+ pb.getProjectMembers().get(i).getPmbName()
+						+ "님을 "
+						+ "[" + pb.getProjectName()
+						+ "] 프로젝트에 초대합니다.   \r\n"
+						+ "        </h2>\r\n"
+						+ "        <h3>\r\n"
+						+ pb.getProjectComment()
+						+ "        </h3>\r\n"
+						+ "        <h2>\r\n"
+						+ "            프로젝트에 참가하시려면 아래 주소에서 로그인 후 인증해주세요"
+						+ "        </h2>\r\n"
+						+ "        <h2>\r\n"
+						+ "            192.168.0.66"
+						+ "        </h2>\r\n"
+						+ "        <h2>\r\n"
+						+ "            인증코드: [ "
+						+ authCode[i] + " ]"
+						+ "        </h2>\r\n"
+						+ "    </div>\r\n"
+						+ "</body>\r\n"
+						+ "</html>";
+				helper.setTo(to[i]);
+				helper.setText(content[i], true);
+				mail.send(mime);
+
+			} catch (InvalidKeyException | UnsupportedEncodingException | NoSuchAlgorithmException
+					| NoSuchPaddingException | InvalidAlgorithmParameterException | IllegalBlockSizeException
+					| BadPaddingException | MessagingException e) {e.printStackTrace();}
+		}*/
 	}
 	private void insProject() {}
 

@@ -25,6 +25,7 @@ public interface MapperInter {
 	public int insProject(ProjectB pb);
 	public List<AuthB> getMemberList(AuthB ab);
 	public int insProjectMembers(ProjectB pb);
+	public int insOneByOne(ProMemB pm);
 	
 	/* new shit */
 	public int insAul(AulB aul);
@@ -45,4 +46,5 @@ public interface MapperInter {
 	public String getProjectMembers(ProjectB pb);
 	
 	public List<ProjectB> getProjectHoon(ProjectB pro);
+	public List<ProjectB> getProjectMembers2(ProMemB pb);
 }

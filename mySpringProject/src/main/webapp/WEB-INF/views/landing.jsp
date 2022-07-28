@@ -27,7 +27,7 @@ function init() {
 function callServer(ajaxData) {
 	jsonData = JSON.parse(ajaxData);
 	const publicIp = "publicIp=" + jsonData.ip;
-	location.href = "http://192.168.0.66/First?" + publicIp;
+	location.href = "http://192.168.0.54/First?" + publicIp;
 	//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
 }
 </script>

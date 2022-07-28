@@ -107,4 +107,15 @@ public class APIController {
 		
 		return (List<ProMemB>)model.getAttribute("hoonList");
 	}
+	
+	@PostMapping("/InviteMore")
+	public String inviteMember(Model model, @ModelAttribute ProjectB pb) {
+		System.out.println("InviteMore");	
+		
+		model.addAttribute(pb);
+
+		pro.backController(6, model);
+	
+		return "management";
+	}
 }
