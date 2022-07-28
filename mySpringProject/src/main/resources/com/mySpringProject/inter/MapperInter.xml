@@ -114,6 +114,10 @@
 	<select id="getProjectList" parameterType="com.mySpringProject.beans.AuthB" resultType="com.mySpringProject.beans.ProListB">
 		SELECT*FROM PROJECTLIST2 WHERE PMBCODE = #{pmbCode} AND ISACCEPT = 'AC' AND POSITION = 'MG'      
 	</select>
+	<select id="getFullProjectList" parameterType="com.mySpringProject.beans.AuthB" resultType="com.mySpringProject.beans.ProListB">
+		SELECT*FROM PROJECTLIST2 WHERE PMBCODE = #{pmbCode} AND POSITION = 'MG'      
+
+	</select>
 	<select id="getProjectMembers" parameterType="com.mySpringProject.beans.ProjectB" resultType="string">
 		<![CDATA[
 		SELECT COUNT(*) FROM PRM INNER JOIN PRO ON PRO_CODE = PRM_PROCODE AND PRM_ACCEPT = 'AC' WHERE PRO_CODE = #{projectCode}
@@ -125,10 +129,16 @@
 		WHERE PRO_CODE IN(SELECT PRM_PROCODE FROM PRM WHERE PRM_PMBCODE = #{pmbCode})
 	</select>
 	<select id="getProjectMembersHoon" resultType="com.mySpringProject.beans.ProMemB">
-		SELECT 	PRM_PMBCODE AS PMBCODE, 
+				SELECT 	PRM_PMBCODE AS PMBCODE, 
 				PRM_POSITION AS POSITION, 
-				PRM_ACCEPT AS ISACCEPT 
-		FROM PRM 
+				PRM_ACCEPT AS ISACCEPT,
+                PMBNAME,
+                EMAIL,
+                MLVCODE,
+                MLVNAME,
+                CLACODE,
+                CLANAME
+		FROM PRM INNER JOIN MEMBERLIST ON PRM_PMBCODE = PMBCODE
 		WHERE PRM_PROCODE = #{projectCode}
 	</select>
 </mapper>

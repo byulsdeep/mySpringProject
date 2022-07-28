@@ -29,7 +29,6 @@ function init() {
 }
 function callBack(ajaxData) {
 	let inviteList = JSON.parse(ajaxData);
-	
 	if(inviteList != null && inviteList != "") {
 		//alert("프로젝트 초대 확인");
 		createInviteList(inviteList);

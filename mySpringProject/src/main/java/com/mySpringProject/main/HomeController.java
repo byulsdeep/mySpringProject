@@ -176,13 +176,12 @@ public class HomeController {
 	@RequestMapping(value = "/MoveMgr", method = RequestMethod.POST)
 	public ModelAndView moveMgr(HttpServletRequest req, ModelAndView mav, @ModelAttribute AuthB ab) {
 		System.out.println("MoveMgr");
-		System.out.println("MoveAlert");
 		ab.setPrivateIp(req.getRemoteAddr());
 		mav.addObject(ab);
 		System.out.println("Public ip:" + ab.getPublicIp());
 		System.out.println("Private ip: " + ab.getPrivateIp());
 		
-		this.mgr.backController(0, mav);
+		this.pro.backController(3, mav);
 		return mav;
 	}
 	

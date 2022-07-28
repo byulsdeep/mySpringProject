@@ -24,6 +24,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.mySpringProject.beans.AulB;
 import com.mySpringProject.beans.AuthB;
+import com.mySpringProject.beans.ProListB;
 import com.mySpringProject.beans.ProMemB;
 import com.mySpringProject.beans.ProjectB;
 import com.mySpringProject.inter.ServicesRule;
@@ -56,6 +57,9 @@ public class Project implements ServicesRule{
 			case 2:
 				this.regProjectMembersCtl(mav);
 				break;
+			case 3:
+				this.ang(mav);
+				break;
 			}
 		} else {
 			mav.setViewName("home");
@@ -67,6 +71,12 @@ public class Project implements ServicesRule{
 			switch(serviceCode) {
 			case 1:
 				this.regProjectCtl(model);
+				break;
+			case 4: 
+				this.aang(model);
+				break;
+			case 5: 
+				this.aaang(model);
 				break;
 			}	
 		}
@@ -210,12 +220,81 @@ public class Project implements ServicesRule{
 					| BadPaddingException | MessagingException e) {e.printStackTrace();}
 		}
 	}
+	
+	private void ang(ModelAndView mav) {
+		System.out.println("Project/backController/ang");	
+		//mav.addObject("hoonList", hoonList);
+		mav.setViewName("management");
+	}
+	
+	private void aang(Model model) {
+		System.out.println("Project/backController/aang");
+		ProjectB pb = (ProjectB)model.getAttribute("projectB");
+		
+		List<ProjectB> hoonList = null;
+		AuthB session = null;
+		
+		try {
+			session = (AuthB)this.pu.getAttribute("accessInfo");
+		} catch (Exception e) {e.printStackTrace();}
+		
+		hoonList = this.session.selectList("getProjectHoon", session);
+		List<ProMemB> ajaxHoonList = new ArrayList<ProMemB>();
+		
+		for(int i=0; i < hoonList.size(); i++) {
+			if(hoonList.get(i).getProjectCode().equals(pb.getProjectCode())) {
+				for(int j=0; j < hoonList.get(i).getProjectMembers().size(); j++) {
+					try {
+						hoonList.get(i).getProjectMembers().get(j).setPmbName(enc.aesDecode(hoonList.get(i).getProjectMembers().get(j).getPmbName(), hoonList.get(i).getProjectMembers().get(j).getPmbCode()));
+						hoonList.get(i).getProjectMembers().get(j).setEmail(enc.aesDecode(hoonList.get(i).getProjectMembers().get(j).getEmail(), hoonList.get(i).getProjectMembers().get(j).getPmbCode()));
+					} catch (InvalidKeyException | UnsupportedEncodingException | NoSuchAlgorithmException
+							| NoSuchPaddingException | InvalidAlgorithmParameterException | IllegalBlockSizeException
+							| BadPaddingException e) {e.printStackTrace();}	
+					
+					ProMemB pm = new ProMemB();
+					pm.setPmbCode(hoonList.get(i).getProjectMembers().get(j).getPmbCode());
+					pm.setPosition(hoonList.get(i).getProjectMembers().get(j).getPosition());
+					pm.setIsAccept(hoonList.get(i).getProjectMembers().get(j).getIsAccept());
+					pm.setPmbName(hoonList.get(i).getProjectMembers().get(j).getPmbName());
+					pm.setEmail(hoonList.get(i).getProjectMembers().get(j).getEmail());
+					pm.setMlvName(hoonList.get(i).getProjectMembers().get(j).getMlvName());
+					pm.setClaName(hoonList.get(i).getProjectMembers().get(j).getClaName());
 
+					ajaxHoonList.add(pm);
+				}			
+			}
+		}
+		
+	model.addAttribute("hoonList", ajaxHoonList);
+	}
+	
+	@Transactional
+	private void aaang(Model model) {
+		System.out.println("Project/aaang");
+		List<AuthB> memberList = null;
+		AuthB au = null;
+
+			memberList = this.session.selectList("getMemberList");
+
+			for(AuthB ab : memberList) {
+				try {
+					ab.setPmbName(this.enc.aesDecode(ab.getPmbName(), ab.getPmbCode()));
+					ab.setEmail(this.enc.aesDecode(ab.getEmail(), ab.getPmbCode()));
+				} catch (InvalidKeyException | UnsupportedEncodingException | NoSuchAlgorithmException
+						| NoSuchPaddingException | InvalidAlgorithmParameterException | IllegalBlockSizeException
+						| BadPaddingException e) {e.printStackTrace();}
+			}
+		
+		model.addAttribute("EmailList", memberList);
+	}
 	private void insProject() {}
 
 	private List<AuthB> getMemberList() {return null;}
 
 	private boolean convertToBool(int result) {
 		return result >= 1 ? true : false;
+	}
+	private void d(String a) {
+		System.out.println(a);
 	}
 }

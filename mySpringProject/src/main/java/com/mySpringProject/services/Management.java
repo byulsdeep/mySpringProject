@@ -55,6 +55,7 @@ public class Management implements ServicesRule{
 		
 		hoonList = this.session.selectList("getProjectHoon", session);
 		
+		
 		mav.addObject("hoonList", hoonList);
 		mav.setViewName("management");
 	}

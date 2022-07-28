@@ -40,6 +40,14 @@ public class APIController {
 		
 		return (List<AuthB>)model.getAttribute("MemberList");
 	}	
+	@PostMapping("/GetEmailList")
+	public List<AuthB> getEmailList(Model model) {
+		System.out.println("GetEmailList");	
+
+		this.pro.backController(5, model);
+		
+		return (List<AuthB>)model.getAttribute("EmailList");
+	}	
 
 	@RequestMapping(value = "/IsInvited", method = RequestMethod.POST)
 	public List<AulB> isInvited(Model model, @ModelAttribute AuthB ab) {
@@ -70,6 +78,15 @@ public class APIController {
 		
 		return (List<ProListB>)model.getAttribute("ProjectList");
 	}
+	@RequestMapping(value = "/GetFullProjectList", method = RequestMethod.POST)
+	public List<ProListB> getFullProjectList(Model model, @ModelAttribute AuthB ab) {
+		System.out.println("GetFullProjectList");
+		model.addAttribute(ab);
+		
+		this.main.backController(5, model);
+		
+		return (List<ProListB>)model.getAttribute("ProjectList");
+	}
 	
 	@RequestMapping(value = "/GetProjectMembers", method = RequestMethod.POST)
 	public String getProjectMembers(Model model, @ModelAttribute ProjectB pb) {
@@ -79,5 +96,15 @@ public class APIController {
 		this.main.backController(4, model);
 		
 		return (String) model.getAttribute("ProjectMembers");
+	}
+	
+	@RequestMapping(value = "/GetHoonList", method = RequestMethod.POST)
+	public List<ProMemB> getHoonList(Model model, @ModelAttribute ProjectB pb) {
+		System.out.println("GetHoonList");
+		System.out.println(pb.getProjectCode());
+		model.addAttribute(pb);
+		this.pro.backController(4, model);
+		
+		return (List<ProMemB>)model.getAttribute("hoonList");
 	}
 }

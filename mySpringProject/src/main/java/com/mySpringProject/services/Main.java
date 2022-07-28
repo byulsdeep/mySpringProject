@@ -71,6 +71,9 @@ public class Main implements ServicesRule{
 			case 4: 
 				this.getProjectMembers(model);
 				break;		
+			case 5:
+				this.getFullProjectList(model);
+				break;	
 			}
 		}
 	}
@@ -135,6 +138,26 @@ public class Main implements ServicesRule{
 			ab.setPmbCode(((AuthB)this.pu.getAttribute("accessInfo")).getPmbCode());
 		} catch (Exception e) {e.printStackTrace();}		
 			projectList = this.session.selectList("getProjectList", ab);
+			
+			for(ProListB pl : projectList) {
+				try {
+					pl.setManagerName(this.enc.aesDecode(pl.getManagerName(), pl.getManager()));
+				} catch (InvalidKeyException | UnsupportedEncodingException | NoSuchAlgorithmException
+						| NoSuchPaddingException | InvalidAlgorithmParameterException | IllegalBlockSizeException
+						| BadPaddingException e) {e.printStackTrace();}
+			}	
+		model.addAttribute("ProjectList", projectList);
+	}
+	
+	private void getFullProjectList(Model model) {		
+		System.out.println("Main/getFullProjectList");
+		List<ProListB> projectList = null;
+		AuthB ab = (AuthB)model.getAttribute("authB");
+
+		try {
+			ab.setPmbCode(((AuthB)this.pu.getAttribute("accessInfo")).getPmbCode());
+		} catch (Exception e) {e.printStackTrace();}		
+			projectList = this.session.selectList("getFullProjectList", ab);
 			
 			for(ProListB pl : projectList) {
 				try {
