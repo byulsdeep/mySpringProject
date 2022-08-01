@@ -12,7 +12,18 @@
 		<result column="PRO_VISIBLE" property="isVisible" />
 		<collection property="projectMembers" javaType="java.util.ArrayList" column="PRO_CODE" ofType="com.mySpringProject.beans.ProMemB" select="getProjectMembersHoon"></collection>
 	</resultMap>
-	
+	<resultMap id="getProjectDetailMap" type="com.mySpringProject.beans.ProjectB">
+		<id column="PRO_CODE" property="projectCode" />
+		<result column="PRO_NAME" property="projectName" />
+		<result column="PRO_COMMENTS" property="projectComment" />
+		<result column="PRO_START" property="startDate" />
+		<result column="PRO_END" property="endDate" />
+		<result column="PRO_VISIBLE" property="isVisible" />
+		<collection property="modules" javaType="java.util.ArrayList" column="projectCode=PRO_CODE" ofType="com.mySpringProject.beans.MouB" select="getModuleList"></collection>
+		<collection property="jobs" javaType="java.util.ArrayList" column="projectCode=PRO_CODE" ofType="com.mySpringProject.beans.JobB" select="getJobList"></collection>
+		<collection property="mojos" javaType="java.util.ArrayList" column="projectCode=PRO_CODE" ofType="com.mySpringProject.beans.MoJoB" select="getMoJoList"></collection>				
+		<collection property="methods" javaType="java.util.ArrayList" column="projectCode=PRO_CODE" ofType="com.mySpringProject.beans.MethodB" select="getMethodList"></collection>
+	</resultMap>
 <!-- auth -->
 	<select id="isMemberr" parameterType="com.mySpringProject.beans.AuthB" resultType="string">
 		SELECT PMB_PASSWORD FROM PMB WHERE PMB_CODE = #{pmbCode} 
@@ -77,8 +88,8 @@
 	</insert>	
 <!-- new shit -->
 	<insert id="insAul" parameterType="com.mySpringProject.beans.AulB">
-		INSERT INTO AUL(AUL_SPMBCODE, AUL_RPMBCODE, AUL_INVITEDATE, AUL_EXPIRE, AUL_AUTHRESULT)
-  		VALUES(#{sender},#{recipient},default,5,default)
+		INSERT INTO AUL(AUL_SPMBCODE, AUL_RPMBCODE, AUL_INVITEDATE, AUL_EXPIRE, AUL_AUTHRESULT, AUL_PROCODE)
+  		VALUES(#{sender},#{recipient},default,5,default, #{projectCode})
 	</insert>
 	<!--  <update id="updAul" parameterType="com.mySpringProject.beans.AulB">
 		 AUL SET AUL_SPMBCODE = #{sender}, AUL_RPMBCODE = #{recipient}, AUL_INVITEDATE, AUL_EXPIRE, AUL_AUTHRESULT)
@@ -121,6 +132,7 @@
 		UPDATE AUL 
         SET AUL_AUTHRESULT = #{authResult}
         WHERE AUL_INVITEDATE = TO_DATE(#{inviteDate}, 'YYYYMMDDHH24MISS') AND AUL_SPMBCODE = #{sender} AND AUL_RPMBCODE = #{recipient}
+        AND AUL_PROCODE = #{projectCode}
 	</update>
 	<select id="getProjectList" parameterType="com.mySpringProject.beans.AuthB" resultType="com.mySpringProject.beans.ProListB">
 		SELECT*FROM PROJECTLIST2 WHERE PMBCODE = #{pmbCode} AND ISACCEPT = 'AC' AND POSITION = 'MG'      
@@ -139,6 +151,37 @@
 		FROM PRO 
 		WHERE PRO_CODE IN(SELECT PRM_PROCODE FROM PRM WHERE PRM_PMBCODE = #{pmbCode})
 	</select>
+	<select id="getProjectDetail" parameterType="com.mySpringProject.beans.ProjectB" resultMap="getProjectDetailMap">
+		SELECT * 
+		FROM PRO 
+		WHERE PRO_CODE = #{projectCode}
+	</select>
+	<select id="getModuleList" parameterType="java.util.HashMap" resultType="com.mySpringProject.beans.MouB">
+		SELECT MOU_PROCODE AS PROJECTCODE, MOU_CODE AS MODULECODE, MOU_NAME AS MODULENAME, MOU_COMMENTS AS MODULECOMMENT
+		FROM MOU WHERE MOU_PROCODE = #{projectCode}
+	</select>
+	<select id="getJobList" parameterType="java.util.HashMap" resultType="com.mySpringProject.beans.JobB">
+		SELECT JOS_PROCODE AS PROJECTCODE, JOS_CODE AS JOBCODE, JOS_NAME AS "JOBNAME", JOS_COMMENTS AS JOBCOMMENT 
+		FROM JOS WHERE JOS_PROCODE = #{projectCode}
+	</select>
+	<select id="getMoJoList" parameterType="java.util.HashMap" resultType="com.mySpringProject.beans.MoJoB">
+SELECT MJ_PROCODE AS PROJECTCODE, 
+MJ_MOUCODE AS MODULECODE, 
+MJ_JOSCODE AS JOBCODE, 
+MJ_PRMPMBCODE AS PMBCODE, 
+PMB_NAME AS PMBNAME
+FROM MJ INNER JOIN PMB ON MJ_PRMPMBCODE = PMB_CODE
+WHERE MJ_PROCODE = #{projectCode}
+	</select>
+	<select id="getMethodList" parameterType="java.util.HashMap" resultType="com.mySpringProject.beans.MethodB">
+		SELECT MET_MJPROCODE AS PROJECTCODE, 
+		MET_MJMOUCODE AS MODULECODE, 
+		MET_MJJOSCODE AS JOBCODE,
+		MET_CODE AS METHODCODE, 
+		MET_NAME AS METHODNAME, 
+		MET_MCCODE AS MCCODE
+		FROM MET WHERE MET_MJPROCODE = #{projectCode}
+	</select>	
 	<select id="getProjectMembersHoon" resultType="com.mySpringProject.beans.ProMemB">
 				SELECT 	PRM_PMBCODE AS PMBCODE, 
 				PRM_POSITION AS POSITION, 
@@ -160,6 +203,7 @@
 	<select id="getProjectMembers3" parameterType="com.mySpringProject.beans.ProMemB" resultType="com.mySpringProject.beans.ProMemB">
 		SELECT PRM_PMBCODE AS PMBCODE, PRM_ACCEPT AS ISACCEPT FROM PRM WHERE PRM_PROCODE = #{projectCode}
 	</select>
+		
 </mapper>
 	<!--  <update id="insProjectMembers" parameterType="com.mySpringProject.beans.ProjectB">
 		<foreach item="pm" collection="projectMembers" separator=" " open="INSERT ALL" close="SELECT * FROM DUAL">

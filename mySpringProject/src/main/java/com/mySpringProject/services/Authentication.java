@@ -250,12 +250,12 @@ public class Authentication implements ServicesRule{
 					aul.setAuthResult("AU");
 					aul.setInviteDate(inviteDate);
 					aul.setSender(sender);
-					aul.setRecipient(session.getPmbCode());		
+					aul.setRecipient(session.getPmbCode());	
+					aul.setProjectCode(projectCode);
 					this.session.update("updAul", aul);
 					System.out.println("updAul check");	
 					
 					mav.setViewName(page);
-					
 			} else {
 				System.out.println("authCode denied");	
 				message = "인증실패";
@@ -269,7 +269,6 @@ public class Authentication implements ServicesRule{
 				System.out.println("updAul check");	
 				mav.setViewName("main");
 			}
-			
 		} catch (Exception e) {e.printStackTrace();}		
 	}
 

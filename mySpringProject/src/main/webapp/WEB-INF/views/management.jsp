@@ -83,7 +83,7 @@ function createProjectList(projectList) {
 			});
 		box.push(createInput("button", "job" + i, null, "btn button", "업무관리"));
 		box[5].addEventListener("click", function(){
-			moveMgr();
+			jobMgr(code);
 			});
 		box.push(createInput("button", "progress" + i, null, "btn button", "결과관리"));
 		box[6].addEventListener("click", function(){
@@ -97,6 +97,147 @@ function createProjectList(projectList) {
 		subProjectList.appendChild(projectThumb[i]);
 	}
 	projectDiv.appendChild(subProjectList);
+}
+
+function jobMgr(code) {
+	projectCode = code;
+	postAjaxJson("GetProjectDetail", "projectCode=" + projectCode, "callBack7");
+}
+
+function callBack7(ajaxData) {
+	let projectDetail = JSON.parse(ajaxData);
+	createModuleList(projectDetail);
+	createJobList(projectDetail);
+	createMoJoList(projectDetail);
+	createMethodList(projectDetail);
+}
+function createMethodList(projectDetail) {
+	let methodDiv = document.getElementById("fffff");
+	methodDiv.innerHTML = "";
+	let methodThumb = [];
+	let box = [];
+	for(i=0; i < projectDetail[0].methods.length; i++) {
+		methodThumb[i] = createDiv("methodThumb" + i, "methodThumb", "", null);
+		for(k=0; box.length !=0; k++) {
+			box.pop();
+		}
+		box.push(createHidden("projectCode", projectDetail[0].projectCode));
+		box.push(createDiv("moduleCode", null, "모듈코드: " + projectDetail[0].methods[i].moduleCode, null));
+		//box.push(createDiv("moduleName", null, "모듈이름: " + projectDetail[0].methods[i].moduleName, null)); 
+		box.push(createDiv("jobCode", null, "잡코드: " + projectDetail[0].methods[i].jobCode, null)); 
+		//box.push(createDiv("jobName", null, "잡이름: " + projectDetail[0].methods[i].jobName, null)); 
+		box.push(createDiv("method", null, "메소드코드: " + projectDetail[0].methods[i].methodCode, null));
+		box.push(createDiv("methodName", null, "메소드이름: " + projectDetail[0].methods[i].methodName, null)); 
+		box.push(createDiv("mcCode", null, "카테고리코드: " + projectDetail[0].methods[i].mcCode, null)); 
+
+		box.push(createDiv(null, null, null, null));
+		box[6].innerHTML = "<input type='button' name='editBtn' placeholder='null' class='stn button' value='수정' onClick='editMethod(\"" + i + "\")'>";
+		box.push(createDiv(null, null, null, null));
+		box[7].innerHTML = "<input type='button' name='deleteBtn' placeholder='null' class='stn button' value='삭제' onClick='deleteMethod(\"" + i + "\")'>";
+		
+		for(j=0; j<box.length; j++) {		
+			methodThumb[i].appendChild(box[j]);
+		}	
+		methodDiv.appendChild(methodThumb[i]);
+	}
+}
+function createMoJoList(projectDetail) {
+	let mojoDiv = document.getElementById("eeeee");
+	mojoDiv.innerHTML = "";
+	let mojoThumb = [];
+	let box = [];
+	for(i=0; i < projectDetail[0].mojos.length; i++) {
+		mojoThumb[i] = createDiv("mojoThumb" + i, "mojoThumb", "", null);
+		for(k=0; box.length !=0; k++) {
+			box.pop();
+		}
+		box.push(createHidden("projectCode", projectDetail[0].projectCode));
+		box.push(createDiv("moduleCode", null, "모듈코드: " + projectDetail[0].mojos[i].moduleCode, null));
+		//box.push(createDiv("moduleName", null, "모듈이름: " + projectDetail[0].mojos[i].moduleName, null)); 
+		box.push(createDiv("jobCode", null, "잡코드: " + projectDetail[0].mojos[i].jobCode, null)); 
+		//box.push(createDiv("jobName", null, "잡이름: " + projectDetail[0].mojos[i].jobName, null)); 
+		box.push(createDiv("pmbCode", null, "회원코드: " + projectDetail[0].mojos[i].pmbCode, null));
+		box.push(createDiv("pmbName", null, "회원이름: " + projectDetail[0].mojos[i].pmbName, null));
+		
+		for(j=0; j<box.length; j++) {		
+			mojoThumb[i].appendChild(box[j]);
+		}	
+		mojoDiv.appendChild(mojoThumb[i]);
+	}
+}
+function createModuleList(projectDetail) {
+	let moduleDiv = document.getElementById("inviteDiv");
+	moduleDiv.innerHTML = "";
+	let moduleThumb = [];
+	let box = [];
+	for(i=0; i < projectDetail[0].modules.length; i++) {
+		moduleThumb[i] = createDiv("moduleThumb" + i, "moduleThumb", "", null);
+		for(k=0; box.length !=0; k++) {
+			box.pop();
+		}
+		box.push(createHidden("projectCode", projectDetail[0].projectCode));
+		box.push(createDiv("moduleCode", null, "모듈코드: " + projectDetail[0].modules[i].moduleCode, null));
+		box.push(createDiv("moduleName", null, "모듈이름: " + projectDetail[0].modules[i].moduleName, null)); 
+		box.push(createDiv("moduleComment", null, "모듈설명: " + projectDetail[0].modules[i].moduleComment, null));
+		box.push(createDiv(null, null, null, null));
+		box[4].innerHTML = "<input type='button' name='editBtn' placeholder='null' class='stn button' value='수정' onClick='editModule(\"" + i + "\")'>";
+		box.push(createDiv(null, null, null, null));
+		box[5].innerHTML = "<input type='button' name='deleteBtn' placeholder='null' class='stn button' value='삭제' onClick='deleteModule(\"" + i + "\")'>";
+		
+		for(j=0; j<box.length; j++) {		
+			moduleThumb[i].appendChild(box[j]);
+		}	
+		moduleDiv.appendChild(moduleThumb[i]);
+	}
+}
+function createJobList(projectDetail) {
+	let jobDiv = document.getElementById("newInvite");
+	jobDiv.innerHTML = "";
+	let jobThumb = [];
+	let box = [];
+	for(i=0; i < projectDetail[0].jobs.length; i++) {
+		jobThumb[i] = createDiv("jobThumb" + i, "jobThumb", "", null);
+		for(k=0; box.length !=0; k++) {
+			box.pop();
+		}
+		box.push(createHidden("projectCode", projectDetail[0].projectCode));
+		box.push(createDiv("jobCode", null, "잡코드: " + projectDetail[0].jobs[i].jobCode, null));
+		box.push(createDiv("jobName", null, "잡이름: " + projectDetail[0].jobs[i].jobName, null)); 
+		box.push(createDiv("jobComment", null, "잡설명: " + projectDetail[0].jobs[i].jobComment, null));
+		box.push(createDiv(null, null, null, null));
+		box[4].innerHTML = "<input type='button' name='editBtn' placeholder='null' class='stn button' value='수정' onClick='editJob(\"" + i + "\")'>";
+		box.push(createDiv(null, null, null, null));
+		box[5].innerHTML = "<input type='button' name='deleteBtn' placeholder='null' class='stn button' value='삭제' onClick='deleteJob(\"" + i + "\")'>";
+		
+		for(j=0; j<box.length; j++) {		
+			jobThumb[i].appendChild(box[j]);
+		}	
+		jobDiv.appendChild(jobThumb[i]);
+	}
+}
+function editMethod(i) {
+	let div = document.getElementById("methodThumb" + i);	
+	alert(div.children[0].value + "," + div.children[3].innerText.substr(6));
+}
+function deleteMethod(i) {
+	let div = document.getElementById("methodThumb" + i);
+	alert(div.children[0].value + "," + div.children[3].innerText.substr(6));
+}
+function editJob(i) {
+	let div = document.getElementById("jobThumb" + i);	
+	alert(div.children[0].value + "," + div.children[1].innerText.substr(4));
+}
+function deleteJob(i) {
+	let div = document.getElementById("jobThumb" + i);
+	alert(div.children[0].value + "," + div.children[1].innerText.substr(4));
+}
+function editModule(i) {
+	let div = document.getElementById("moduleThumb" + i);	
+	alert(div.children[0].value + "," + div.children[1].innerText.substr(5));
+}
+function deleteModule(i) {
+	let div = document.getElementById("moduleThumb" + i);
+	alert(div.children[0].value + "," + div.children[1].innerText.substr(5));
 }
 
 function memberMgr(code, name, comment, start, end) {
@@ -135,7 +276,6 @@ function createEmailList(memberList) {
 	newInvite.appendChild(createInput("button", "sendMore" , null, "btn button", "추가 이메일 전송"));
 	let newThumb = [];
 	let box = [];
-	
 	
 	for(i=0; i < memberList.length; i++) {
 		if(!pmbCode.includes(memberList[i].pmbCode)) {
@@ -192,9 +332,6 @@ function sendRight(value) {
 			div.children[4].innerText];
 		toSendList.push(array);
 	}
-
-	
-
 	div.children[5].innerHTML = "";
 }
 function sendMail() {
@@ -208,13 +345,13 @@ function sendMail() {
 		clientData += "&projectMembers[" + i + "].email=" + toSendList[i][4];
 	}
 
-	alert(clientData);
 	postAjaxJson("InviteMore", clientData, "getMessage");
 }
 
 function getMessage(ajaxData) {
 	
 }
+
 
 function createProjectMemberList(hoonList) {
 	let memberDiv = document.getElementById("inviteDiv");
@@ -223,7 +360,7 @@ function createProjectMemberList(hoonList) {
 	let box = [];
 	
 	for(i=0; i < hoonList.length; i++) {
-		
+
 		(hoonList[i].isAccept == "AC") 
 		? memberThumb[i] = createDiv("memberThumb" + i, "memberThumbAC", "", null)
 		: memberThumb[i] = createDiv("memberThumb" + i, "memberThumb", "", null);
@@ -311,19 +448,21 @@ PROJECT CLASS 에서 작업 */
   		</div>
   	</div>
   	<div>
-  		<div id="inviteDiv">
-  
+  		<div id="inviteDiv">	
   		</div>
   	</div>
   	<div>
   		<div id="newInvite">
-  			
   		</div>
   	</div>
   	<div>
   		<div id="eeeee">			
   		</div>
   	</div>  	
+  	<div>
+  		<div id="fffff">			
+  		</div>
+  	</div>   	
   	<div>
   		<div id="progressBar">			
   		</div>

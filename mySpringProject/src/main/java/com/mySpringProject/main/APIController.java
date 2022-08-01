@@ -13,10 +13,15 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.mySpringProject.beans.AulB;
 import com.mySpringProject.beans.AuthB;
+import com.mySpringProject.beans.JobB;
+import com.mySpringProject.beans.MethodB;
+import com.mySpringProject.beans.MoJoB;
+import com.mySpringProject.beans.MouB;
 import com.mySpringProject.beans.ProListB;
 import com.mySpringProject.beans.ProMemB;
 import com.mySpringProject.beans.ProjectB;
 import com.mySpringProject.services.Main;
+import com.mySpringProject.services.Management;
 import com.mySpringProject.services.Project;
 
 @RestController
@@ -25,6 +30,8 @@ public class APIController {
 	private Project pro;
 	@Autowired
 	private Main main;
+	@Autowired
+	private Management mgr;
 	
 	@PostMapping("/InsProject")
 	public List<AuthB> insProject(Model model, @ModelAttribute ProjectB pb) {
@@ -118,4 +125,40 @@ public class APIController {
 	
 		return "management";
 	}
+	@PostMapping("/GetProjectDetail")
+	public List<ProjectB> getProjectDetail(Model model, @ModelAttribute ProjectB pb) {
+		System.out.println("GetProjectDetail");	
+		model.addAttribute(pb);
+
+		mgr.backController(1, model);
+	
+		return (List<ProjectB>)model.getAttribute("projectDetail");
+	}
+	/* @PostMapping("/GetJobList")
+	public List<JobB> getJobList(Model model, @ModelAttribute ProjectB pb) {
+		System.out.println("GetModuleList");	
+		model.addAttribute(pb);
+
+		mgr.backController(2, model);
+	
+		return (List<JobB>)model.getAttribute("jobList");
+	}
+	@PostMapping("/GetMoJoList")
+	public List<MoJoB> getMoJoList(Model model, @ModelAttribute ProjectB pb) {
+		System.out.println("GetMoJoList");	
+		model.addAttribute(pb);
+
+		mgr.backController(3, model);
+	
+		return (List<MoJoB>)model.getAttribute("mojoList");
+	}
+	@PostMapping("/GetMethodList")
+	public List<MethodB> getMethodList(Model model, @ModelAttribute ProjectB pb) {
+		System.out.println("GetMethodList");	
+		model.addAttribute(pb);
+
+		mgr.backController(4, model);
+	
+		return (List<MethodB>)model.getAttribute("methodList");
+	} */
 }

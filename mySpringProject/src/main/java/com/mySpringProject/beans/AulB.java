@@ -12,6 +12,7 @@ public class AulB {
 	private String expireDate;
 	private String authResult;
 	private String authResultName;
+	private String projectCode;
 	
 	/* myshit */
 	private String projectName;

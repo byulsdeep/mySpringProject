@@ -81,10 +81,9 @@ public class Project implements ServicesRule{
 			case 6:
 				this.aaaang(model);
 				break;
-			}	
+			}
 		}
 	}
-
 	private void mainCtl(ModelAndView mav) {
 		System.out.println("Project/mainCtl");
 		String page = "project";
@@ -160,13 +159,13 @@ public class Project implements ServicesRule{
 
 		AulB aul;
 
-
 		for(int i=0; i < to.length; i++) {
 			to[i] = pb.getProjectMembers().get(i).getEmail();
 
 			aul = new AulB();
 			aul.setSender(session.getPmbCode());
 			aul.setRecipient(pb.getProjectMembers().get(i).getPmbCode());
+			aul.setProjectCode(projectCode);
 			this.session.insert("insAul", aul);
 			inviteDate[i] = this.session.selectOne("getInviteDate", aul);
 
@@ -300,42 +299,16 @@ public class Project implements ServicesRule{
 			session = (AuthB)this.pu.getAttribute("accessInfo");
 		} catch (Exception e1) {e1.printStackTrace();}
 
-		/*List<ProjectB> hoonList = null;
-		hoonList = this.session.selectList("getProjectMembers2", pb);
-		
-		for(int i = 0; i < hoonList.size(); i++) {
-			for(int j =0; j < hoonList.get(i).getProjectMembers().size(); j++) {
-				for(int k =0; k < pb.getProjectMembers().size(); k++) {
-					if(hoonList.get(i).getProjectMembers().get(j).getPmbCode().equals(pb.getProjectMembers().get(k).getPmbCode())) {
-						hoonList.get(i).getProjectMembers().remove(j);
-					}
-				}
-			}		
-		}
-		
-
-		
-		d("-----------");
-		d(String.valueOf(hoonList.size()));
-		d(String.valueOf(hoonList.get(0).getProjectMembers().size()));
-		
-		for(int i = 0; i < hoonList.size(); i++) {
-			for(int j =0; j < hoonList.get(i).getProjectMembers().size(); j++) {
-				d(hoonList.get(i).getProjectMembers().get(j).getPmbCode());
-			}		
-		}*/
-		
 		for(int i = 0; i < pb.getProjectMembers().size(); i++) {
 			pb.getProjectMembers().get(i).setProjectCode(pb.getProjectCode());
-			this.session.insert("insOneByOne", pb.getProjectMembers().get(i));
 			try {
-				
+				this.session.insert("insOneByOne", pb.getProjectMembers().get(i));
 			} catch(Exception e) {
 				d("caught one");
 			}	
 		}
-		
-		/*String subject = "[" + pb.getProjectName() + "] 프로젝트 초대장";
+
+		String subject = "[" + pb.getProjectName() + "] 프로젝트 초대장";
 
 		String from = "byulzdeep@outlook.com";
 		String[] to = new String [(pb.getProjectMembers().size())];
@@ -360,6 +333,7 @@ public class Project implements ServicesRule{
 			aul = new AulB();
 			aul.setSender(session.getPmbCode());
 			aul.setRecipient(pb.getProjectMembers().get(i).getPmbCode());
+			aul.setProjectCode(projectCode);
 			this.session.insert("insAul", aul);
 			inviteDate[i] = this.session.selectOne("getInviteDate", aul);
 
@@ -414,7 +388,7 @@ public class Project implements ServicesRule{
 			} catch (InvalidKeyException | UnsupportedEncodingException | NoSuchAlgorithmException
 					| NoSuchPaddingException | InvalidAlgorithmParameterException | IllegalBlockSizeException
 					| BadPaddingException | MessagingException e) {e.printStackTrace();}
-		}*/
+		}
 	}
 	private void insProject() {}
 
