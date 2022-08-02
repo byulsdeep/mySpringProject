@@ -4,6 +4,7 @@ import java.io.UnsupportedEncodingException;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.crypto.BadPaddingException;
@@ -60,17 +61,141 @@ public class Management implements ServicesRule{
 			case 1:
 				this.getProjectDetail(model);
 				break;
-			/*case 2:
-				this.getJobList(model);
+			case 2:
+				this.updModule(model);
 				break;
 			case 3:
-				this.getMoJoList(model);
+				this.delModule(model);
 				break;
 			case 4:
-				this.getMethodList(model);
-				break;*/
+				this.insModule(model);
+				break;
+			case 5:
+				this.updJob(model);
+				break;
+			case 6:
+				this.delJob(model);
+				break;
+			case 7:
+				this.insJob(model);
+				break;
+			case 8:
+				this.updMoJo(model);
+				break;
+			case 9:
+				this.deleteMoJo(model);
+				break;
+			case 10:
+				this.insMoJo(model);
+				break;
+			case 11:
+				this.updMethod(model);
+				break;
+			case 12:
+				this.delMethod(model);
+				break;
+			case 13:
+				this.insMethod(model);
+				break;
 			}
 		}
+	}
+	
+	private void updModule(Model model) {
+		HashMap<String, String> map = new HashMap<String, String>();
+		MouB mb = (MouB)model.getAttribute("mouB");
+		this.session.update("updModule", mb);
+		map.put("projectCode", mb.getProjectCode());
+		List<MouB> moduleList = this.session.selectList("getModuleList", map);
+		model.addAttribute("moduleList", moduleList);
+	}
+	private void delModule(Model model) {
+		HashMap<String, String> map = new HashMap<String, String>();
+		MouB mb = (MouB)model.getAttribute("mouB");
+		this.session.update("delModule", mb);
+		map.put("projectCode", mb.getProjectCode());
+		List<MouB> moduleList = this.session.selectList("getModuleList", map);
+		model.addAttribute("moduleList", moduleList);
+	}
+	private void insModule(Model model) {
+		HashMap<String, String> map = new HashMap<String, String>();
+		MouB mb = (MouB)model.getAttribute("mouB");
+		this.session.update("insModule", mb);
+		map.put("projectCode", mb.getProjectCode());
+		List<MouB> moduleList = this.session.selectList("getModuleList", map);
+		model.addAttribute("moduleList", moduleList);
+	}
+	private void updJob(Model model) {
+		HashMap<String, String> map = new HashMap<String, String>();
+		JobB jb = (JobB)model.getAttribute("jobB");
+		this.session.update("updJobs", jb);
+		map.put("projectCode", jb.getProjectCode());
+		List<MouB> jobList = this.session.selectList("getJobList", map);
+		model.addAttribute("jobList", jobList);
+	}
+	private void delJob(Model model) {
+		HashMap<String, String> map = new HashMap<String, String>();
+		JobB jb = (JobB)model.getAttribute("jobB");
+		this.session.update("delJobs", jb);
+		map.put("projectCode", jb.getProjectCode());
+		List<MouB> jobList = this.session.selectList("getJobList", map);
+		model.addAttribute("jobList", jobList);
+	}
+	private void insJob(Model model) {
+		HashMap<String, String> map = new HashMap<String, String>();
+		JobB jb = (JobB)model.getAttribute("jobB");
+		this.session.update("insJobs", jb);
+		map.put("projectCode", jb.getProjectCode());
+		List<MouB> jobList = this.session.selectList("getJobList", map);
+		model.addAttribute("jobList", jobList);
+	}
+	private void updMoJo(Model model) {
+		HashMap<String, String> map = new HashMap<String, String>();
+		MoJoB mj = (MoJoB)model.getAttribute("moJoB");
+		this.session.update("updMoJo", mj);
+		map.put("projectCode", mj.getProjectCode());
+		List<MoJoB> mojoList = this.session.selectList("getMoJoList", map);
+		model.addAttribute("mojoList", mojoList);
+	}
+	private void deleteMoJo(Model model) {
+		HashMap<String, String> map = new HashMap<String, String>();
+		MoJoB mj = (MoJoB)model.getAttribute("moJoB");
+		this.session.update("delMoJo", mj);
+		map.put("projectCode", mj.getProjectCode());
+		List<MoJoB> mojoList = this.session.selectList("getMoJoList", map);
+		model.addAttribute("mojoList", mojoList);
+	}
+	private void insMoJo(Model model) {
+		HashMap<String, String> map = new HashMap<String, String>();
+		MoJoB mj = (MoJoB)model.getAttribute("moJoB");
+		this.session.update("insMoJo", mj);
+		map.put("projectCode", mj.getProjectCode());
+		List<MoJoB> mojoList = this.session.selectList("getMoJoList", map);
+		model.addAttribute("mojoList", mojoList);
+	}
+	private void updMethod(Model model) {
+		HashMap<String, String> map = new HashMap<String, String>();
+		MethodB mt = (MethodB)model.getAttribute("methodB");
+		this.session.update("updMethods", mt);
+		map.put("projectCode", mt.getProjectCode());
+		List<MethodB> methodList = this.session.selectList("getMethodList", map);
+		model.addAttribute("methodList", methodList);
+	}
+	private void delMethod(Model model) {
+		HashMap<String, String> map = new HashMap<String, String>();
+		MethodB mt = (MethodB)model.getAttribute("methodB");
+		this.session.update("delMethods", mt);
+		map.put("projectCode", mt.getProjectCode());
+		List<MethodB> methodList = this.session.selectList("getMethodList", map);
+		model.addAttribute("methodList", methodList);
+	}
+	private void insMethod(Model model) {
+		HashMap<String, String> map = new HashMap<String, String>();
+		MethodB mt = (MethodB)model.getAttribute("methodB");
+		this.session.update("insMethods", mt);
+		map.put("projectCode", mt.getProjectCode());
+		List<MethodB> methodList = this.session.selectList("getMethodList", map);
+		model.addAttribute("methodList", methodList);
 	}
 	
 	private void getProjectDetail(Model model) {
@@ -88,28 +213,11 @@ public class Management implements ServicesRule{
 		}
 		model.addAttribute("projectDetail", projectDetail);
 	}
-	/*private void getJobList(Model model) {
-		System.out.println("Management/getJobList");
-		List<JobB> jobList = null;
-		ProjectB pb = (ProjectB)model.getAttribute("projectB");
-		jobList = this.session.selectList("getJobList", pb);
-		model.addAttribute("jobList", jobList);
-	}
-	private void getMoJoList(Model model) {
-		System.out.println("Management/getMoJoList");
-		List<MoJoB> mojoList = null;
-		ProjectB pb = (ProjectB)model.getAttribute("projectB");
-		mojoList = this.session.selectList("getMoJoList", pb);
-		model.addAttribute("mojoList", mojoList);
-	}
-	private void getMethodList(Model model) {
-		System.out.println("Management/getMethodList");
-		List<MethodB> methodList = null;
-		ProjectB pb = (ProjectB)model.getAttribute("projectB");
-		methodList = this.session.selectList("getMethodList", pb);
-		model.addAttribute("methodList", methodList);
-	}*/
 	
+	private void temp(ModelAndView mav) {
+		HashMap<String, String> map = new HashMap<String, String>();
+		map.put("projectCode", ((ProjectB)mav.getModel().get("projectB")).getProjectCode());
+	}
 	private void mainCtl(ModelAndView mav) {
 		System.out.println("Management/mainCtl");
 		
@@ -128,4 +236,6 @@ public class Management implements ServicesRule{
 		mav.addObject("hoonList", hoonList);
 		mav.setViewName("management");
 	}
+	
+	
 }

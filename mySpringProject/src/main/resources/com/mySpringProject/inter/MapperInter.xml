@@ -161,27 +161,88 @@
 		FROM MOU WHERE MOU_PROCODE = #{projectCode}
 	</select>
 	<select id="getJobList" parameterType="java.util.HashMap" resultType="com.mySpringProject.beans.JobB">
-		SELECT JOS_PROCODE AS PROJECTCODE, JOS_CODE AS JOBCODE, JOS_NAME AS "JOBNAME", JOS_COMMENTS AS JOBCOMMENT 
+		SELECT JOS_PROCODE AS PROJECTCODE, 
+		JOS_CODE AS JOBCODE, 
+		JOS_NAME AS "JOBNAME", 
+		JOS_COMMENTS AS JOBCOMMENT 
 		FROM JOS WHERE JOS_PROCODE = #{projectCode}
 	</select>
 	<select id="getMoJoList" parameterType="java.util.HashMap" resultType="com.mySpringProject.beans.MoJoB">
-SELECT MJ_PROCODE AS PROJECTCODE, 
-MJ_MOUCODE AS MODULECODE, 
-MJ_JOSCODE AS JOBCODE, 
-MJ_PRMPMBCODE AS PMBCODE, 
-PMB_NAME AS PMBNAME
-FROM MJ INNER JOIN PMB ON MJ_PRMPMBCODE = PMB_CODE
-WHERE MJ_PROCODE = #{projectCode}
+		SELECT MJ_PROCODE AS PROJECTCODE, 
+		MJ_MOUCODE AS MODULECODE,
+		MOU_NAME AS MODULENAME, 
+		MJ_JOSCODE AS JOBCODE, 
+		JOS_NAME AS JOBNAME,
+		MJ_PRMPMBCODE AS PMBCODE, 
+		PMB_NAME AS PMBNAME
+		FROM MJ INNER JOIN PMB ON MJ_PRMPMBCODE = PMB_CODE
+		INNER JOIN MOU ON MJ_MOUCODE = MOU_CODE
+		INNER JOIN JOS ON MJ_JOSCODE = JOS_CODE
+		WHERE MJ_PROCODE = #{projectCode}  
 	</select>
 	<select id="getMethodList" parameterType="java.util.HashMap" resultType="com.mySpringProject.beans.MethodB">
 		SELECT MET_MJPROCODE AS PROJECTCODE, 
 		MET_MJMOUCODE AS MODULECODE, 
+		MOU_NAME AS MODULENAME,
 		MET_MJJOSCODE AS JOBCODE,
+		JOS_NAME AS JOBNAME,
 		MET_CODE AS METHODCODE, 
 		MET_NAME AS METHODNAME, 
 		MET_MCCODE AS MCCODE
-		FROM MET WHERE MET_MJPROCODE = #{projectCode}
+		FROM MET INNER JOIN MOU ON MET_MJMOUCODE = MOU_CODE
+		INNER JOIN JOS ON MET_MJJOSCODE = JOS_CODE
+		WHERE MET_MJPROCODE = #{projectCode}
 	</select>	
+	
+	<!-- upd del -->
+	<update id="updModule" parameterType="com.mySpringProject.beans.MouB">
+		UPDATE MOU SET MOU_NAME = #{moduleName}, MOU_COMMENTS = #{moduleComment}
+		WHERE MOU_PROCODE = #{projectCode} AND MOU_CODE = #{moduleCode} 
+	</update>
+	<update id="delModule" parameterType="com.mySpringProject.beans.MouB">
+		DELETE FROM MOU WHERE MOU_PROCODE = #{projectCode} AND MOU_CODE = #{moduleCode} 
+	</update>
+	<update id="insModule" parameterType="com.mySpringProject.beans.MouB">
+		INSERT INTO MOU(MOU_PROCODE, MOU_CODE, MOU_NAME, MOU_COMMENTS)
+		VALUES(#{projectCode}, #{moduleCode}, #{moduleName}, #{moduleComment})
+	</update>
+	
+	<update id="updJobs" parameterType="com.mySpringProject.beans.JobB">
+		UPDATE JOS SET JOS_NAME = #{jobName}, JOS_COMMENTS = #{jobComment}
+		WHERE JOS_PROCODE = #{projectCode} AND JOS_CODE = #{jobCode} 
+	</update>
+	<update id="delJobs" parameterType="com.mySpringProject.beans.JobB">
+		DELETE FROM JOS WHERE JOS_PROCODE = #{projectCode} AND JOS_CODE = #{jobCode} 
+	</update>
+	<update id="insJobs" parameterType="com.mySpringProject.beans.JobB">
+		INSERT INTO JOS(JOS_PROCODE, JOS_CODE, JOS_NAME, JOS_COMMENTS)
+		VALUES(#{projectCode}, #{jobCode}, #{jobName}, #{jobComment})
+	</update>
+	
+	<update id="updMoJo" parameterType="com.mySpringProject.beans.MoJoB">
+		UPDATE MJ SET MJ_PRMPMBCODE = #{pmbCode}
+		WHERE MJ_PROCODE = #{projectCode} AND MJ_MOUCODE = #{moduleCode} AND MJ_JOSCODE = #{jobCode}
+	</update>
+	<update id="delMoJo" parameterType="com.mySpringProject.beans.MoJoB">
+		DELETE FROM MJ WHERE MJ_PROCODE = #{projectCode} AND MJ_MOUCODE = #{moduleCode} AND MJ_JOSCODE = #{jobCode}
+	</update>
+	<update id="insMoJo" parameterType="com.mySpringProject.beans.MoJoB">
+		INSERT INTO MJ(MJ_PROCODE, MJ_MOUCODE, MJ_JOSCODE, MJ_PRMPMBCODE)
+		VALUES(#{projectCode}, #{moduleCode}, #{jobCode}, #{pmbCode})
+	</update>
+	
+	<update id="updMethods" parameterType="com.mySpringProject.beans.MethodB">
+		UPDATE MET SET MET_NAME = #{methodName}, MET_MCCODE = #{mcCode}
+		WHERE MET_MJPROCODE = #{projectCode} AND MET_CODE = #{methodCode}
+	</update>
+	<update id="delMethods" parameterType="com.mySpringProject.beans.MethodB">
+		DELETE FROM MET WHERE MET_MJPROCODE = #{projectCode} AND MET_CODE = #{methodCode}
+	</update>
+	<update id="insMethods" parameterType="com.mySpringProject.beans.MethodB">
+		INSERT INTO MET(MET_MJPROCODE, MET_MJMOUCODE, MET_MJJOSCODE, MET_CODE, MET_NAME, MET_MCCODE)
+		VALUES(#{projectCode}, #{moduleCode}, #{jobCode}, #{methodCode}, #{methodName}, #{mcCode})
+	</update>
+	<!-- upd del -->
 	<select id="getProjectMembersHoon" resultType="com.mySpringProject.beans.ProMemB">
 				SELECT 	PRM_PMBCODE AS PMBCODE, 
 				PRM_POSITION AS POSITION, 

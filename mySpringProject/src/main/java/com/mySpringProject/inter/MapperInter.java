@@ -1,5 +1,6 @@
 package com.mySpringProject.inter;
 
+import java.util.HashMap;
 import java.util.List;
 
 import com.mySpringProject.beans.AulB;
@@ -54,8 +55,24 @@ public interface MapperInter {
 	
 	public List<ProjectB> getProjectDetail(ProjectB pro);
 	
-	/* public List<MouB> getModuleList(ProjectB pb);
-	public List<JobB> getJobList(ProjectB pb);
-	public List<MoJoB> getMoJoList(ProjectB pb);
-	public List<MethodB> getMethodList(ProjectB pb); */
+	public List<MouB> getModuleList(HashMap map);
+	public List<JobB> getJobList(HashMap map);
+	public List<MoJoB> getMoJoList(HashMap map);
+	public List<MethodB> getMethodList(HashMap map);
+	
+	public int updModule(MouB mb);
+	public int delModule(MouB mb);
+	public int insModule(MouB mb);
+	
+	public int updJobs(JobB jb);
+	public int delJobs(JobB mb);
+	public int insJobs(JobB mb);
+	
+	public int updMoJo(MoJoB mj);
+	public int delMoJo(MoJoB mj);
+	public int insMoJo(MoJoB mj);
+	
+	public int updMethods(MethodB mt);
+	public int delMethods(MethodB mt);
+	public int insMethods(MethodB mt);
 }

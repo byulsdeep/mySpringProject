@@ -134,31 +134,102 @@ public class APIController {
 	
 		return (List<ProjectB>)model.getAttribute("projectDetail");
 	}
-	/* @PostMapping("/GetJobList")
-	public List<JobB> getJobList(Model model, @ModelAttribute ProjectB pb) {
-		System.out.println("GetModuleList");	
-		model.addAttribute(pb);
+	
+	//module
+	@PostMapping("/UpdModule")
+	public List<MouB> updModule(Model model, @ModelAttribute MouB mb) {
+		System.out.println("UpdModule");	
+		model.addAttribute(mb);
 
 		mgr.backController(2, model);
 	
-		return (List<JobB>)model.getAttribute("jobList");
+		return (List<MouB>)model.getAttribute("moduleList");
 	}
-	@PostMapping("/GetMoJoList")
-	public List<MoJoB> getMoJoList(Model model, @ModelAttribute ProjectB pb) {
-		System.out.println("GetMoJoList");	
-		model.addAttribute(pb);
+	@PostMapping("/DelModule")
+	public List<MouB> delModule(Model model, @ModelAttribute MouB mb) {
+		System.out.println("DelModule");	
+		model.addAttribute(mb);
 
 		mgr.backController(3, model);
 	
-		return (List<MoJoB>)model.getAttribute("mojoList");
+		return (List<MouB>)model.getAttribute("moduleList");
 	}
-	@PostMapping("/GetMethodList")
-	public List<MethodB> getMethodList(Model model, @ModelAttribute ProjectB pb) {
-		System.out.println("GetMethodList");	
-		model.addAttribute(pb);
+	@PostMapping("/InsModule")
+	public List<MouB> insModule(Model model, @ModelAttribute MouB mb) {
+		System.out.println("InsModule");	
+		model.addAttribute(mb);
 
 		mgr.backController(4, model);
 	
+		return (List<MouB>)model.getAttribute("moduleList");
+	}
+	
+	//job
+	@PostMapping("/UpdJob")
+	public List<JobB> updJob(Model model, @ModelAttribute JobB jb) {
+		System.out.println("UpdJob");	
+		model.addAttribute(jb);
+		mgr.backController(5, model);
+		return (List<JobB>)model.getAttribute("jobList");
+	}
+	@PostMapping("/DelJob")
+	public List<JobB> delJob(Model model, @ModelAttribute JobB jb) {
+		System.out.println("DelJob");	
+		model.addAttribute(jb);
+		mgr.backController(6, model);
+		return (List<JobB>)model.getAttribute("jobList");
+	}
+	@PostMapping("/InsJob")
+	public List<JobB> insJob(Model model, @ModelAttribute JobB jb) {
+		System.out.println("InsJob");	
+		model.addAttribute(jb);
+		mgr.backController(7, model);
+		return (List<JobB>)model.getAttribute("jobList");
+	}
+	
+	//MoJo
+	@PostMapping("/UpdMoJo")
+	public List<MoJoB> updMoJo(Model model, @ModelAttribute MoJoB mj) {
+		System.out.println("UpdMoJo");	
+		model.addAttribute(mj);
+		mgr.backController(8, model);
+		return (List<MoJoB>)model.getAttribute("mojoList");
+	}
+	@PostMapping("/DeleteMoJo")
+	public List<MoJoB> deleteMoJo(Model model, @ModelAttribute MoJoB mj) {
+		System.out.println("DeleteMoJo");	
+		model.addAttribute(mj);
+		mgr.backController(9, model);
+		return (List<MoJoB>)model.getAttribute("mojoList");
+	}
+	@PostMapping("/InsMoJo")
+	public List<MoJoB> insMoJo(Model model, @ModelAttribute MoJoB mj) {
+		System.out.println("InsMoJo");	
+		model.addAttribute(mj);
+		mgr.backController(10, model);
+		return (List<MoJoB>)model.getAttribute("mojoList");
+	}
+	
+	//method
+	@PostMapping("/UpdMethod")
+	public List<MethodB> updMethod(Model model, @ModelAttribute MethodB mt) {
+		System.out.println("UpdMethod");	
+		model.addAttribute(mt);
+		mgr.backController(11, model);
 		return (List<MethodB>)model.getAttribute("methodList");
-	} */
+	}
+	@PostMapping("/DelMethod")
+	public List<MethodB> delMethod(Model model, @ModelAttribute MethodB mt) {
+		System.out.println("DelMethod");	
+		model.addAttribute(mt);
+		mgr.backController(12, model);
+		return (List<MethodB>)model.getAttribute("methodList");
+	}
+	@PostMapping("/InsMethod")
+	public List<MethodB> insMethod(Model model, @ModelAttribute MethodB mt) {
+		System.out.println("InsMethod");	
+		model.addAttribute(mt);
+		mgr.backController(13, model);
+		return (List<MethodB>)model.getAttribute("methodList");
+	}
 }

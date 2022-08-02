@@ -6,6 +6,10 @@ function lightBoxCtl(title, disp) {
     header.innerText = title;
     canvas.style.display = disp ? "block" : "none";
 }
+function closeCanvas(){
+	let canvas = document.getElementById("canvas");
+	canvas.style.display = "none";
+}
 function createInput(type, name, placeholder, classs, value, isRead) {
     let input = document.createElement("input");
     input.setAttribute("type", type);

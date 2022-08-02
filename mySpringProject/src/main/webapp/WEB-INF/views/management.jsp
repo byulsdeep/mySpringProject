@@ -25,6 +25,7 @@ function init() {
 	}
 	postAjaxJson("GetFullProjectList", null, "callBack3");
 }
+
 function callBack3(ajaxData) {
 	let projectList = JSON.parse(ajaxData);
 	
@@ -66,11 +67,12 @@ function createProjectList(projectList) {
 		
 		projectThumb[i] = createDiv("projectThumb" + i, "projectThumbOn", "", null);
 		box.push(createDiv("projectName" + i, "bigAss", projectList[i].projectName, null)); 
+		box.push(createDiv("projectCode" + i, "projectCode", projectList[i].projectCode, null)); 
 		box.push(createDiv("managerName" + i, "managerName", "매니저 :" + projectList[i].managerName, null));	
 		
 		box.push(createDiv("period" + i, "period", "기간: " + projectList[i].startDate.substr(0,10) + " ~ " + projectList[i].endDate.substr(0,10), null));
 		box.push(createDiv("projectComment" + i, "projectComment", "상세: " + projectList[i].projectComment, null));
-		box.push(createInput("button", "member" + i, null, "btn button", "멤버관리"));
+		box.push(createInput("button", "member" + i, null, "stn button", "멤버관리"));
 		
 		let code = projectList[i].projectCode;
 		let name = projectList[i].projectName;
@@ -78,15 +80,15 @@ function createProjectList(projectList) {
 		let start = projectList[i].startDate;
 		let end = projectList[i].endDate;
 		
-		box[4].addEventListener("click", function(){
+		box[5].addEventListener("click", function(){
 			memberMgr(code, name, comment, start, end);
 			});
-		box.push(createInput("button", "job" + i, null, "btn button", "업무관리"));
-		box[5].addEventListener("click", function(){
+		box.push(createInput("button", "job" + i, null, "stn button", "업무관리"));
+		box[6].addEventListener("click", function(){
 			jobMgr(code);
 			});
-		box.push(createInput("button", "progress" + i, null, "btn button", "결과관리"));
-		box[6].addEventListener("click", function(){
+		box.push(createInput("button", "progress" + i, null, "stn button", "결과관리"));
+		box[7].addEventListener("click", function(){
 			showProgress();
 			});	
 		
@@ -114,6 +116,13 @@ function callBack7(ajaxData) {
 function createMethodList(projectDetail) {
 	let methodDiv = document.getElementById("fffff");
 	methodDiv.innerHTML = "";
+	let adiv = createDiv(null, null, null, null);
+	let ainput = createInput("button", "button", null, "btn button", "메소드 추가", null);
+	adiv.appendChild(ainput);
+	methodDiv.appendChild(adiv);
+	ainput.addEventListener("click", function(){
+		insertMethod();
+		});
 	let methodThumb = [];
 	let box = [];
 	for(i=0; i < projectDetail[0].methods.length; i++) {
@@ -123,17 +132,54 @@ function createMethodList(projectDetail) {
 		}
 		box.push(createHidden("projectCode", projectDetail[0].projectCode));
 		box.push(createDiv("moduleCode", null, "모듈코드: " + projectDetail[0].methods[i].moduleCode, null));
-		//box.push(createDiv("moduleName", null, "모듈이름: " + projectDetail[0].methods[i].moduleName, null)); 
+		box.push(createDiv("moduleName", null, "모듈이름: " + projectDetail[0].methods[i].moduleName, null)); 
 		box.push(createDiv("jobCode", null, "잡코드: " + projectDetail[0].methods[i].jobCode, null)); 
-		//box.push(createDiv("jobName", null, "잡이름: " + projectDetail[0].methods[i].jobName, null)); 
+		box.push(createDiv("jobName", null, "잡이름: " + projectDetail[0].methods[i].jobName, null)); 
 		box.push(createDiv("method", null, "메소드코드: " + projectDetail[0].methods[i].methodCode, null));
 		box.push(createDiv("methodName", null, "메소드이름: " + projectDetail[0].methods[i].methodName, null)); 
 		box.push(createDiv("mcCode", null, "카테고리코드: " + projectDetail[0].methods[i].mcCode, null)); 
 
 		box.push(createDiv(null, null, null, null));
-		box[6].innerHTML = "<input type='button' name='editBtn' placeholder='null' class='stn button' value='수정' onClick='editMethod(\"" + i + "\")'>";
+		box[8].innerHTML = "<input type='button' name='editBtn' placeholder='null' class='stn button' value='수정' onClick='editMethod(\"" + i + "\")'>";
 		box.push(createDiv(null, null, null, null));
-		box[7].innerHTML = "<input type='button' name='deleteBtn' placeholder='null' class='stn button' value='삭제' onClick='deleteMethod(\"" + i + "\")'>";
+		box[9].innerHTML = "<input type='button' name='deleteBtn' placeholder='null' class='stn button' value='삭제' onClick='deleteMethod(\"" + i + "\")'>";
+		
+		for(j=0; j<box.length; j++) {		
+			methodThumb[i].appendChild(box[j]);
+		}	
+		methodDiv.appendChild(methodThumb[i]);
+	}
+}
+function recreateMethodList(projectDetail) {
+	let methodDiv = document.getElementById("fffff");
+	methodDiv.innerHTML = "";
+	let adiv = createDiv(null, null, null, null);
+	let ainput = createInput("button", "button", null, "btn button", "메소드 추가", null);
+	adiv.appendChild(ainput);
+	methodDiv.appendChild(adiv);
+	ainput.addEventListener("click", function(){
+		insertMethod();
+		});
+	let methodThumb = [];
+	let box = [];
+	for(i=0; i < projectDetail.length; i++) {
+		methodThumb[i] = createDiv("methodThumb" + i, "methodThumb", "", null);
+		for(k=0; box.length !=0; k++) {
+			box.pop();
+		}
+		box.push(createHidden("projectCode", projectDetail.projectCode));
+		box.push(createDiv("moduleCode", null, "모듈코드: " + projectDetail[i].moduleCode, null));
+		box.push(createDiv("moduleName", null, "모듈이름: " + projectDetail[i].moduleName, null)); 
+		box.push(createDiv("jobCode", null, "잡코드: " + projectDetail[i].jobCode, null)); 
+		box.push(createDiv("jobName", null, "잡이름: " + projectDetail[i].jobName, null)); 
+		box.push(createDiv("method", null, "메소드코드: " + projectDetail[i].methodCode, null));
+		box.push(createDiv("methodName", null, "메소드이름: " + projectDetail[i].methodName, null)); 
+		box.push(createDiv("mcCode", null, "카테고리코드: " + projectDetail[i].mcCode, null)); 
+
+		box.push(createDiv(null, null, null, null));
+		box[8].innerHTML = "<input type='button' name='editBtn' placeholder='null' class='stn button' value='수정' onClick='editMethod(\"" + i + "\")'>";
+		box.push(createDiv(null, null, null, null));
+		box[9].innerHTML = "<input type='button' name='deleteBtn' placeholder='null' class='stn button' value='삭제' onClick='deleteMethod(\"" + i + "\")'>";
 		
 		for(j=0; j<box.length; j++) {		
 			methodThumb[i].appendChild(box[j]);
@@ -144,6 +190,13 @@ function createMethodList(projectDetail) {
 function createMoJoList(projectDetail) {
 	let mojoDiv = document.getElementById("eeeee");
 	mojoDiv.innerHTML = "";
+	let adiv = createDiv(null, null, null, null);
+	let ainput = createInput("button", "button", null, "btn button", "모듈잡 추가", null);
+	adiv.appendChild(ainput);
+	mojoDiv.appendChild(ainput);
+	ainput.addEventListener("click", function(){
+		insertMoJo();
+		});
 	let mojoThumb = [];
 	let box = [];
 	for(i=0; i < projectDetail[0].mojos.length; i++) {
@@ -153,11 +206,52 @@ function createMoJoList(projectDetail) {
 		}
 		box.push(createHidden("projectCode", projectDetail[0].projectCode));
 		box.push(createDiv("moduleCode", null, "모듈코드: " + projectDetail[0].mojos[i].moduleCode, null));
-		//box.push(createDiv("moduleName", null, "모듈이름: " + projectDetail[0].mojos[i].moduleName, null)); 
+		box.push(createDiv("moduleName", null, "모듈이름: " + projectDetail[0].mojos[i].moduleName, null)); 
 		box.push(createDiv("jobCode", null, "잡코드: " + projectDetail[0].mojos[i].jobCode, null)); 
-		//box.push(createDiv("jobName", null, "잡이름: " + projectDetail[0].mojos[i].jobName, null)); 
+		box.push(createDiv("jobName", null, "잡이름: " + projectDetail[0].mojos[i].jobName, null)); 
 		box.push(createDiv("pmbCode", null, "회원코드: " + projectDetail[0].mojos[i].pmbCode, null));
 		box.push(createDiv("pmbName", null, "회원이름: " + projectDetail[0].mojos[i].pmbName, null));
+		
+		box.push(createDiv(null, null, null, null));
+		box[7].innerHTML = "<input type='button' name='editBtn' placeholder='null' class='stn button' value='수정' onClick='editMoJo(\"" + i + "\")'>";
+		box.push(createDiv(null, null, null, null));
+		box[8].innerHTML = "<input type='button' name='deleteBtn' placeholder='null' class='stn button' value='삭제' onClick='deleteMoJo(\"" + i + "\")'>";
+		
+		for(j=0; j<box.length; j++) {		
+			mojoThumb[i].appendChild(box[j]);
+		}	
+		mojoDiv.appendChild(mojoThumb[i]);
+	}
+}
+function recreateMoJoList(projectDetail) {
+	let mojoDiv = document.getElementById("eeeee");
+	mojoDiv.innerHTML = "";
+	let adiv = createDiv(null, null, null, null);
+	let ainput = createInput("button", "button", null, "btn button", "모듈잡 추가", null);
+	adiv.appendChild(ainput);
+	mojoDiv.appendChild(ainput);
+	ainput.addEventListener("click", function(){
+		insertMoJo();
+		});
+	let mojoThumb = [];
+	let box = [];
+	for(i=0; i < projectDetail.length; i++) {
+		mojoThumb[i] = createDiv("mojoThumb" + i, "mojoThumb", "", null);
+		for(k=0; box.length !=0; k++) {
+			box.pop();
+		}
+		box.push(createHidden("projectCode", projectDetail.projectCode));
+		box.push(createDiv("moduleCode", null, "모듈코드: " + projectDetail[i].moduleCode, null));
+		box.push(createDiv("moduleName", null, "모듈이름: " + projectDetail[i].moduleName, null)); 
+		box.push(createDiv("jobCode", null, "잡코드: " + projectDetail[i].jobCode, null)); 
+		box.push(createDiv("jobName", null, "잡이름: " + projectDetail[i].jobName, null)); 
+		box.push(createDiv("pmbCode", null, "회원코드: " + projectDetail[i].pmbCode, null));
+		box.push(createDiv("pmbName", null, "회원이름: " + projectDetail[i].pmbName, null));
+		
+		box.push(createDiv(null, null, null, null));
+		box[7].innerHTML = "<input type='button' name='editBtn' placeholder='null' class='stn button' value='수정' onClick='editMoJo(\"" + i + "\")'>";
+		box.push(createDiv(null, null, null, null));
+		box[8].innerHTML = "<input type='button' name='deleteBtn' placeholder='null' class='stn button' value='삭제' onClick='deleteMoJo(\"" + i + "\")'>";
 		
 		for(j=0; j<box.length; j++) {		
 			mojoThumb[i].appendChild(box[j]);
@@ -168,6 +262,13 @@ function createMoJoList(projectDetail) {
 function createModuleList(projectDetail) {
 	let moduleDiv = document.getElementById("inviteDiv");
 	moduleDiv.innerHTML = "";
+	let adiv = createDiv(null, null, null, null);
+	let ainput = createInput("button", "button", null, "btn button", "모듈 추가", null);
+	adiv.appendChild(ainput);
+	moduleDiv.appendChild(ainput);
+	ainput.addEventListener("click", function(){
+		insertModule();
+		});
 	let moduleThumb = [];
 	let box = [];
 	for(i=0; i < projectDetail[0].modules.length; i++) {
@@ -182,8 +283,38 @@ function createModuleList(projectDetail) {
 		box.push(createDiv(null, null, null, null));
 		box[4].innerHTML = "<input type='button' name='editBtn' placeholder='null' class='stn button' value='수정' onClick='editModule(\"" + i + "\")'>";
 		box.push(createDiv(null, null, null, null));
-		box[5].innerHTML = "<input type='button' name='deleteBtn' placeholder='null' class='stn button' value='삭제' onClick='deleteModule(\"" + i + "\")'>";
-		
+		box[5].innerHTML = "<input type='button' name='deleteBtn' placeholder='null' class='stn button' value='삭제' onClick='deleteModule(\"" + i + "\")'>";	
+		for(j=0; j<box.length; j++) {		
+			moduleThumb[i].appendChild(box[j]);
+		}	
+		moduleDiv.appendChild(moduleThumb[i]);
+	}
+}
+function recreateModuleList(projectDetail) {
+	let moduleDiv = document.getElementById("inviteDiv");
+	moduleDiv.innerHTML = "";
+	let adiv = createDiv(null, null, null, null);
+	let ainput = createInput("button", "button", null, "btn button", "모듈 추가", null);
+	adiv.appendChild(ainput);
+	moduleDiv.appendChild(ainput);
+	ainput.addEventListener("click", function(){
+		insertModule();
+		});
+	let moduleThumb = [];
+	let box = [];
+	for(i=0; i < projectDetail.length; i++) {
+		moduleThumb[i] = createDiv("moduleThumb" + i, "moduleThumb", "", null);
+		for(k=0; box.length !=0; k++) {
+			box.pop();
+		}
+		box.push(createHidden("projectCode", projectDetail.projectCode));
+		box.push(createDiv("moduleCode", null, "모듈코드: " + projectDetail[i].moduleCode, null));
+		box.push(createDiv("moduleName", null, "모듈이름: " + projectDetail[i].moduleName, null)); 
+		box.push(createDiv("moduleComment", null, "모듈설명: " + projectDetail[i].moduleComment, null));
+		box.push(createDiv(null, null, null, null));
+		box[4].innerHTML = "<input type='button' name='editBtn' placeholder='null' class='stn button' value='수정' onClick='editModule(\"" + i + "\")'>";
+		box.push(createDiv(null, null, null, null));
+		box[5].innerHTML = "<input type='button' name='deleteBtn' placeholder='null' class='stn button' value='삭제' onClick='deleteModule(\"" + i + "\")'>";	
 		for(j=0; j<box.length; j++) {		
 			moduleThumb[i].appendChild(box[j]);
 		}	
@@ -193,6 +324,13 @@ function createModuleList(projectDetail) {
 function createJobList(projectDetail) {
 	let jobDiv = document.getElementById("newInvite");
 	jobDiv.innerHTML = "";
+	let adiv = createDiv(null, null, null, null);
+	let ainput = createInput("button", "button", null, "btn button", "잡 추가", null);
+	adiv.appendChild(ainput);
+	jobDiv.appendChild(ainput);
+	ainput.addEventListener("click", function(){
+		insertJob();
+		});
 	let jobThumb = [];
 	let box = [];
 	for(i=0; i < projectDetail[0].jobs.length; i++) {
@@ -207,37 +345,373 @@ function createJobList(projectDetail) {
 		box.push(createDiv(null, null, null, null));
 		box[4].innerHTML = "<input type='button' name='editBtn' placeholder='null' class='stn button' value='수정' onClick='editJob(\"" + i + "\")'>";
 		box.push(createDiv(null, null, null, null));
-		box[5].innerHTML = "<input type='button' name='deleteBtn' placeholder='null' class='stn button' value='삭제' onClick='deleteJob(\"" + i + "\")'>";
-		
+		box[5].innerHTML = "<input type='button' name='deleteBtn' placeholder='null' class='stn button' value='삭제' onClick='deleteJob(\"" + i + "\")'>";		
 		for(j=0; j<box.length; j++) {		
 			jobThumb[i].appendChild(box[j]);
 		}	
 		jobDiv.appendChild(jobThumb[i]);
 	}
 }
-function editMethod(i) {
-	let div = document.getElementById("methodThumb" + i);	
-	alert(div.children[0].value + "," + div.children[3].innerText.substr(6));
+function recreateJobList(projectDetail) {
+	let jobDiv = document.getElementById("newInvite");
+	jobDiv.innerHTML = "";
+	let adiv = createDiv(null, null, null, null);
+	let ainput = createInput("button", "button", null, "btn button", "잡 추가", null);
+	adiv.appendChild(ainput);
+	jobDiv.appendChild(ainput);
+	ainput.addEventListener("click", function(){
+		insertJob();
+		});
+	let jobThumb = [];
+	let box = [];
+	for(i=0; i < projectDetail.length; i++) {
+		jobThumb[i] = createDiv("jobThumb" + i, "jobThumb", "", null);
+		for(k=0; box.length !=0; k++) {
+			box.pop();
+		}
+		box.push(createHidden("projectCode", projectDetail.projectCode));
+		box.push(createDiv("jobCode", null, "잡코드: " + projectDetail[i].jobCode, null));
+		box.push(createDiv("jobName", null, "잡이름: " + projectDetail[i].jobName, null)); 
+		box.push(createDiv("jobComment", null, "잡설명: " + projectDetail[i].jobComment, null));
+		box.push(createDiv(null, null, null, null));
+		box[4].innerHTML = "<input type='button' name='editBtn' placeholder='null' class='stn button' value='수정' onClick='editJob(\"" + i + "\")'>";
+		box.push(createDiv(null, null, null, null));
+		box[5].innerHTML = "<input type='button' name='deleteBtn' placeholder='null' class='stn button' value='삭제' onClick='deleteJob(\"" + i + "\")'>";		
+		for(j=0; j<box.length; j++) {		
+			jobThumb[i].appendChild(box[j]);
+		}	
+		jobDiv.appendChild(jobThumb[i]);
+	}
 }
-function deleteMethod(i) {
-	let div = document.getElementById("methodThumb" + i);
-	alert(div.children[0].value + "," + div.children[3].innerText.substr(6));
+function callBackModule(ajaxData) {
+	let moduleList = JSON.parse(ajaxData);
+	recreateModuleList(moduleList);
 }
-function editJob(i) {
-	let div = document.getElementById("jobThumb" + i);	
-	alert(div.children[0].value + "," + div.children[1].innerText.substr(4));
+function callBackJob(ajaxData) {	
+	let jobList = JSON.parse(ajaxData);
+	recreateJobList(jobList);
 }
-function deleteJob(i) {
-	let div = document.getElementById("jobThumb" + i);
-	alert(div.children[0].value + "," + div.children[1].innerText.substr(4));
+function callBackMoJo(ajaxData) {
+	let MoJoList = JSON.parse(ajaxData);
+	recreateMoJoList(MoJoList);
 }
+function callBackMethod(ajaxData) {	
+	let methodList = JSON.parse(ajaxData);
+	recreateMethodList(methodList);
+}
+//MOU
 function editModule(i) {
 	let div = document.getElementById("moduleThumb" + i);	
-	alert(div.children[0].value + "," + div.children[1].innerText.substr(5));
+	lightBoxCtl('모듈수정', true);
+	let cbody = document.getElementById("cbody");
+	cbody.innerHTML = "";
+	cbody.innerText = "";
+	let box = [];      
+	box.push(createInput("text", "moduleName", "모듈이름", "box", null, null));                
+	box.push(document.createElement("textarea"));
+	box[1].setAttribute("name", "moduleComment");
+	box[1].setAttribute("placeholder", "모듈설명");
+	box[1].setAttribute("class", "box");
+	box[1].setAttribute("rows", "2");
+	box[1].setAttribute("cols", "60");
+	box.push(createInput("button", "button", null, "btn button", "확인", null));
+	box.push(createInput("button", "button", null, "btn button", "취소", null));		
+	for(i=0; i<box.length; i++) {
+		cbody.appendChild(box[i]);
+	}
+	box[2].addEventListener("click", function(){
+		clientData = "";
+		clientData += "projectCode=" + projectCode +"&moduleCode=" + div.children[1].innerText.substr(6);
+		clientData += "&moduleName=" + box[0].value + "&moduleComment=" + box[1].value;
+		postAjaxJson("UpdModule", clientData, "callBackModule");
+		closeCanvas();
+		});
+	box[3].addEventListener("click", function(){
+		closeCanvas();
+		});
 }
 function deleteModule(i) {
 	let div = document.getElementById("moduleThumb" + i);
-	alert(div.children[0].value + "," + div.children[1].innerText.substr(5));
+	lightBoxCtl('모듈삭제', true);
+	let cbody = document.getElementById("cbody");
+	cbody.innerHTML = "";
+	cbody.innerText = "모듈을 삭제하겠습니까";
+	let button = createInput("button", "button", null, "btn button", "확인", null);		
+	cbody.appendChild(button);
+	button.addEventListener("click", function(){
+		clientData = "";
+		clientData += "projectCode=" + projectCode +"&moduleCode=" + div.children[1].innerText.substr(6);
+		postAjaxJson("DelModule", clientData,"callBackModule");
+		closeCanvas();
+		});
+	let button2 = createInput("button", "button", null, "btn button", "취소", null);
+	cbody.appendChild(button2);
+	button2.addEventListener("click", function(){
+		closeCanvas();
+		});
+}
+function insertModule(i) {
+	let div = document.getElementById("moduleThumb" + i);
+	lightBoxCtl('모듈추가', true);
+	let cbody = document.getElementById("cbody");
+	cbody.innerHTML = "";
+	cbody.innerText = "";
+	let box = [];
+	box.push(createInput("text", "moduleCode", "모듈코드", "box", null, null));    
+	box.push(createInput("text", "moduleName", "모듈이름", "box", null, null));                
+	box.push(document.createElement("textarea"));
+	box[2].setAttribute("name", "moduleComment");
+	box[2].setAttribute("placeholder", "모듈설명");
+	box[2].setAttribute("class", "box");
+	box[2].setAttribute("rows", "2");
+	box[2].setAttribute("cols", "60");
+	box.push(createInput("button", "button", null, "btn button", "확인", null));
+	box.push(createInput("button", "button", null, "btn button", "취소", null));		
+	for(i=0; i<box.length; i++) {
+		cbody.appendChild(box[i]);
+	}
+	box[3].addEventListener("click", function(){
+		clientData = "";
+		clientData += "projectCode=" + projectCode +"&moduleCode=" + box[0].value;
+		clientData += "&moduleName=" + box[1].value + "&moduleComment=" + box[2].value;
+		postAjaxJson("InsModule", clientData,"callBackModule");
+		closeCanvas();
+		});
+	box[4].addEventListener("click", function(){
+		closeCanvas();
+		});
+}
+
+//JOS
+function editJob(i) {
+	let div = document.getElementById("jobThumb" + i);	
+	lightBoxCtl('잡수정', true);
+	let cbody = document.getElementById("cbody");
+	cbody.innerHTML = "";
+	cbody.innerText = "";
+	let box = [];    
+	box.push(createInput("text", "jobName", "잡이름", "box", null, null));                
+	box.push(document.createElement("textarea"));
+	box[1].setAttribute("name", "jobComment");
+	box[1].setAttribute("placeholder", "잡설명");
+	box[1].setAttribute("class", "box");
+	box[1].setAttribute("rows", "2");
+	box[1].setAttribute("cols", "60");
+	box.push(createInput("button", "button", null, "btn button", "확인", null));
+	box.push(createInput("button", "button", null, "btn button", "취소", null));		
+	for(i=0; i<box.length; i++) {
+		cbody.appendChild(box[i]);
+	}
+	box[2].addEventListener("click", function(){
+		clientData = "";
+		clientData += "projectCode=" + projectCode +"&jobCode=" + div.children[1].innerText.substr(5);
+		clientData += "&jobName=" + box[0].value + "&jobComment=" + box[1].value;
+		postAjaxJson("UpdJob", clientData,"callBackJob");
+		closeCanvas();
+		});
+	box[3].addEventListener("click", function(){
+		closeCanvas();
+		});
+}
+function deleteJob(i) {
+	let div = document.getElementById("jobThumb" + i);
+	lightBoxCtl('잡삭제', true);
+	let cbody = document.getElementById("cbody");
+	cbody.innerHTML = "";
+	cbody.innerText = "잡을 삭제하겠습니까";
+	let button = createInput("button", "button", null, "btn button", "확인", null);		
+	cbody.appendChild(button);
+	button.addEventListener("click", function(){
+		clientData = "";
+		clientData += "projectCode=" + projectCode +"&jobCode=" + div.children[1].innerText.substr(5);
+		postAjaxJson("DelJob", clientData,"callBackJob");
+		closeCanvas();
+		});
+	let button2 = createInput("button", "button", null, "btn button", "취소", null);
+	cbody.appendChild(button2);
+	button2.addEventListener("click", function(){
+		closeCanvas();
+		});
+}
+function insertJob(i) {
+	let div = document.getElementById("jobThumb" + i);
+	lightBoxCtl('잡추가', true);
+	let cbody = document.getElementById("cbody");
+	cbody.innerHTML = "";
+	cbody.innerText = "";
+	let box = [];
+	box.push(createInput("text", "jobCode", "잡코드", "box", null, null));    
+	box.push(createInput("text", "jobName", "잡이름", "box", null, null));                
+	box.push(document.createElement("textarea"));
+	box[2].setAttribute("name", "jobComment");
+	box[2].setAttribute("placeholder", "잡설명");
+	box[2].setAttribute("class", "box");
+	box[2].setAttribute("rows", "2");
+	box[2].setAttribute("cols", "60");
+	box.push(createInput("button", "button", null, "btn button", "확인", null));
+	box.push(createInput("button", "button", null, "btn button", "취소", null));		
+	for(i=0; i<box.length; i++) {
+		cbody.appendChild(box[i]);
+	}
+	box[3].addEventListener("click", function(){
+		clientData = "";
+		clientData += "projectCode=" + projectCode +"&jobCode=" + box[0].value;
+		clientData += "&jobName=" + box[1].value + "&jobComment=" + box[2].value;
+		postAjaxJson("InsJob", clientData,"callBackJob");
+		closeCanvas();
+		});
+	box[4].addEventListener("click", function(){
+		closeCanvas();
+		});
+}
+
+//MJ
+function editMoJo(i) {
+	let div = document.getElementById("mojoThumb" + i);	
+	lightBoxCtl('모듈잡수정', true);
+	let cbody = document.getElementById("cbody");
+	cbody.innerHTML = "";
+	cbody.innerText = "";
+	let box = [];     
+	box.push(createInput("text", "pmbCode", "회원코드", "box", null, null));   
+	box.push(createInput("button", "button", null, "btn button", "확인", null));
+	box.push(createInput("button", "button", null, "btn button", "취소", null));		
+	for(i=0; i<box.length; i++) {
+		cbody.appendChild(box[i]);
+	}
+	box[1].addEventListener("click", function(){
+		clientData = "";
+		clientData += "projectCode=" + projectCode +"&moduleCode=" + div.children[1].innerText.substr(6);
+		clientData += "&jobCode=" + div.children[3].innerText.substr(5) + "&pmbCode=" + box[0].value;
+		postAjaxJson("UpdMoJo", clientData, "callBackMoJo");
+		closeCanvas();
+		});
+	box[2].addEventListener("click", function(){
+		closeCanvas();
+		});
+}
+function deleteMoJo(i) {
+	let div = document.getElementById("mojoThumb" + i);
+	lightBoxCtl('모듈잡삭제', true);
+	let cbody = document.getElementById("cbody");
+	cbody.innerHTML = "";
+	cbody.innerText = "모듈잡을 삭제하겠습니까";
+	let button = createInput("button", "button", null, "btn button", "확인", null);		
+	cbody.appendChild(button);
+	button.addEventListener("click", function(){
+		clientData = "";
+		clientData += "projectCode=" + projectCode +"&moduleCode=" + div.children[1].innerText.substr(6);
+		clientData += "&jobCode=" + div.children[3].innerText.substr(5);
+		postAjaxJson("DeleteMoJo", clientData,"callBackMoJo");
+		closeCanvas();
+		});
+	let button2 = createInput("button", "button", null, "btn button", "취소", null);
+	cbody.appendChild(button2);
+	button2.addEventListener("click", function(){
+		closeCanvas();
+		});
+}
+function insertMoJo(i) {
+	let div = document.getElementById("mojothumb" + i);
+	lightBoxCtl('잡모듈추가', true);
+	let cbody = document.getElementById("cbody");
+	cbody.innerHTML = "";
+	cbody.innerText = "";
+	let box = [];
+	box.push(createInput("text", "moduleCode", "모듈코드", "box", null, null));    
+	box.push(createInput("text", "jobCode", "잡코드", "box", null, null));       
+	box.push(createInput("text", "pmbCode", "회원코드", "box", null, null));   
+	box.push(createInput("button", "button", null, "btn button", "확인", null));
+	box.push(createInput("button", "button", null, "btn button", "취소", null));		
+	for(i=0; i<box.length; i++) {
+		cbody.appendChild(box[i]);
+	}
+	box[3].addEventListener("click", function(){
+		clientData = "";
+		clientData += "projectCode=" + projectCode +"&moduleCode=" + box[0].value;
+		clientData += "&jobCode=" + box[1].value + "&pmbCode=" + box[2].value;
+		postAjaxJson("InsMoJo", clientData, "callBackMoJo");
+		closeCanvas();
+		});
+	box[4].addEventListener("click", function(){
+		closeCanvas();
+		});
+}
+
+//MET
+function editMethod(i) {
+	let div = document.getElementById("methodThumb" + i);	
+	lightBoxCtl('메소드수정', true);
+	let cbody = document.getElementById("cbody");
+	cbody.innerHTML = "";
+	cbody.innerText = "";
+	let box = [];     
+	box.push(createInput("text", "methodName", "메소드이름", "box", null, null)); 
+	box.push(createInput("text", "mcCode", "카테고리", "box", null, null));   
+	box.push(createInput("button", "button", null, "btn button", "확인", null));
+	box.push(createInput("button", "button", null, "btn button", "취소", null));		
+	for(i=0; i<box.length; i++) {
+		cbody.appendChild(box[i]);
+	}
+	box[2].addEventListener("click", function(){
+		clientData = "";
+		clientData += "projectCode=" + projectCode +"&methodCode=" + div.children[5].innerText.substr(7);
+		clientData += "&methodName=" + box[0].value + "&mcCode=" + box[1].value;
+		postAjaxJson("UpdMethod", clientData,"callBackMethod");
+		closeCanvas();
+		});
+	box[3].addEventListener("click", function(){
+		closeCanvas();
+		});
+}
+function deleteMethod(i) {
+	let div = document.getElementById("methodThumb" + i);
+	lightBoxCtl('메소드삭제', true);
+	let cbody = document.getElementById("cbody");
+	cbody.innerHTML = "";
+	cbody.innerText = "메소드를 삭제하겠습니까";
+	let button = createInput("button", "button", null, "btn button", "확인", null);		
+	cbody.appendChild(button);
+	button.addEventListener("click", function(){
+		clientData = "";
+		clientData += "projectCode=" + projectCode +"&methodCode=" + div.children[5].innerText.substr(7);
+		postAjaxJson("DelMethod", clientData,"callBackMethod");
+		closeCanvas();
+		});
+	let button2 = createInput("button", "button", null, "btn button", "취소", null);
+	cbody.appendChild(button2);
+	button2.addEventListener("click", function(){
+		closeCanvas();
+		});
+}
+function insertMethod(i) {
+	let div = document.getElementById("methodthumb" + i);
+	lightBoxCtl('메소드추가', true);
+	let cbody = document.getElementById("cbody");
+	cbody.innerHTML = "";
+	cbody.innerText = "";
+	let box = [];
+	box.push(createInput("text", "moduleCode", "모듈코드", "box", null, null));    
+	box.push(createInput("text", "jobCode", "잡코드", "box", null, null));       
+	box.push(createInput("text", "methodCode", "메소드코드", "box", null, null)); 
+	box.push(createInput("text", "methodName", "메소드이름", "box", null, null)); 
+	box.push(createInput("text", "mcCode", "카테고리", "box", null, null));  
+	box.push(createInput("button", "button", null, "btn button", "확인", null));
+	box.push(createInput("button", "button", null, "btn button", "취소", null));		
+	for(i=0; i<box.length; i++) {
+		cbody.appendChild(box[i]);
+	}
+	box[5].addEventListener("click", function(){
+		clientData = "";
+		clientData += "projectCode=" + projectCode +"&moduleCode=" + box[0].value;
+		clientData += "&jobCode=" + box[1].value + "&methodCode=" + box[2].value;
+		clientData += "&methodName=" + box[3].value + "&mcCode=" + box[4].value;
+		postAjaxJson("InsMethod", clientData,"callBackMethod");
+		closeCanvas();
+		});
+	box[6].addEventListener("click", function(){
+		closeCanvas();
+		});
 }
 
 function memberMgr(code, name, comment, start, end) {
@@ -491,6 +965,19 @@ PROJECT CLASS 에서 작업 */
   </span>
 </header>
 <i id="newProject" class="fa-solid fa-folder-plus" onClick="moveProject()" ></i>
+<!-- Light Box Start -->
+	<div id="canvas" class="canvas">
+		<div id="light-box" class="light-box">
+			<div id="image-zone" class="lightbox image"></div>
+			<div id="content-zone" class="lightbox content">
+				<div id="cheader"></div>
+				<div id="cbody"></div>			
+				<div id="cfoot"></div>
+			</div>
+		</div>	
+	</div>
+<!-- Light Box End -->
 <form name="form" method="post"></form>	
+
 </body>
 </html>

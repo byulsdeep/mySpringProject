@@ -338,10 +338,7 @@ function createLeft(ajaxData) {
 	left.appendChild(b5);
 }
 
-function closeCanvas(){
-	let canvas = document.getElementById("canvas");
-	canvas.style.display = "none";
-}
+
 
 </script>
 </head>
