@@ -89,7 +89,11 @@ function createProjectList(projectList) {
 			});
 		box.push(createInput("button", "progress" + i, null, "stn button", "결과관리"));
 		box[7].addEventListener("click", function(){
-			showProgress();
+			resultMgr(code);
+			});	
+		box.push(createInput("button", "progress" + i, null, "stn button", "진행도관리"));
+		box[8].addEventListener("click", function(){
+			progressMgr(code);
 			});	
 		
 		for(j=0; j<box.length; j++) {		
@@ -875,10 +879,21 @@ function createProjectMemberList(hoonList) {
 		memberDiv.insertBefore(memberThumbAC[i], memberDiv.children[0]);
 	}
 }
-function showProgress() {
-	let progressBar = document.getElementById("progressBar");
-	progressBar.innerHTML = "<img src='res/images/radialProgressBar.png'></img>";
+function progressMgr(code) {
+	let form = document.getElementsByName("form")[0];
+	let binput = createInput("text", "projectCode", null, null, code, null);
+	form.appendChild(binput);
+	form.action = "ProgressMgr";
+	form.submit();
 }
+function resultMgr(code) {
+	let form = document.getElementsByName("form")[0];
+	let binput = createInput("text", "projectCode", null, null, code, null);
+	form.appendChild(binput);
+	form.action = "ResultMgr";
+	form.submit();
+}
+
 function moveUp() {
 	if(projectThumb.length >= 4) {
 		let a = projectThumb[projectThumb.length-1];	

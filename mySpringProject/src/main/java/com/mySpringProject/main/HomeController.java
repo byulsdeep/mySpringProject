@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -30,7 +31,10 @@ import com.mySpringProject.services.MyPage;
 import com.mySpringProject.services.Notification;
 import com.mySpringProject.services.Project;
 
+import lombok.extern.log4j.Log4j;
+
 @Controller
+@Log4j
 public class HomeController {
 	@Autowired
 	Authentication auth;
@@ -155,13 +159,40 @@ public class HomeController {
 		auth.backController(2, mav);	
 		return mav;
 	}
-	
+	@RequestMapping(value = "/ProgressMgr", method = RequestMethod.POST)
+	public ModelAndView progressMgr(ModelAndView mav, @ModelAttribute ProjectB pb) {
+		System.out.println("ProgressMgr");
+		System.out.println(pb.getProjectCode());
+		mav.addObject(pb);
+		mgr.backController(1, mav);	
+		return mav;
+	}
+	@RequestMapping(value = "/ResultMgr", method = RequestMethod.POST)
+	public ModelAndView resultMgr(ModelAndView mav, @ModelAttribute ProjectB pb) {
+		System.out.println("ResultMgr");
+		System.out.println(pb.getProjectCode());
+		mav.addObject(pb);
+		mgr.backController(2, mav);	
+		return mav;
+	}
 	
 	
 /* -------------------------------------------------------------------------------------------------------------------------------------------------------------- */
 	
+	/*@GetMapping("/chat")
+	public void chat(Model model) {
+		
+		CustomUser user = (CustomUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		
+		
+		log.info("==================================");
+		log.info("@ChatController, GET Chat / Username : " + user.getUsername());
+		
+		model.addAttribute("userid", user.getUsername());
+	}
 	
-	
+/* -------------------------------------------------------------------------------------------------------------------------------------------------------------- */
+
 	@RequestMapping(value = "/RequestParam", method = RequestMethod.POST)
 	public String access1(@RequestParam("pmbCode") String pmbCode) {
 		System.out.println("@RequestParam---getParameter({})");	

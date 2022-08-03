@@ -48,6 +48,12 @@ public class Management implements ServicesRule{
 			case 0:
 				this.mainCtl(mav);
 				break;
+			case 1:
+				this.progressMgr(mav);
+				break;
+			case 2:
+				this.resultMgr(mav);
+				break;	
 			}
 		} else {
 			mav.setViewName("home");
@@ -99,6 +105,85 @@ public class Management implements ServicesRule{
 				break;
 			}
 		}
+	}
+	/*private void getProjectDetail(Model model) {
+		System.out.println("Management/getProjectDetail");
+		List<ProjectB> projectDetail = null;
+		ProjectB pb = (ProjectB)model.getAttribute("projectB");
+		projectDetail = this.session.selectList("getProjectDetail", pb);
+		
+		for(int i = 0; i < projectDetail.get(0).getMojos().size(); i++) {
+			try {
+				projectDetail.get(0).getMojos().get(i).setPmbName(enc.aesDecode(projectDetail.get(0).getMojos().get(i).getPmbName(), projectDetail.get(0).getMojos().get(i).getPmbCode()));
+			} catch (InvalidKeyException | UnsupportedEncodingException | NoSuchAlgorithmException
+					| NoSuchPaddingException | InvalidAlgorithmParameterException | IllegalBlockSizeException
+					| BadPaddingException e) {e.printStackTrace();}
+		}
+		model.addAttribute("projectDetail", projectDetail);
+	}*/
+	
+	private void progressMgr(ModelAndView mav) {
+		System.out.println("Management/progressMgr");
+		mav.setViewName("progress");
+		List<ProjectB> projectDetail = null;
+		ProjectB pb = (ProjectB)mav.getModel().get("projectB");
+		projectDetail = this.session.selectList("getProjectDetail", pb);	
+		for(int i = 0; i < projectDetail.get(0).getMojos().size(); i++) {
+			try {
+				projectDetail.get(0).getMojos().get(i).setPmbName(enc.aesDecode(projectDetail.get(0).getMojos().get(i).getPmbName(), projectDetail.get(0).getMojos().get(i).getPmbCode()));
+			} catch (InvalidKeyException | UnsupportedEncodingException | NoSuchAlgorithmException
+					| NoSuchPaddingException | InvalidAlgorithmParameterException | IllegalBlockSizeException
+					| BadPaddingException e) {e.printStackTrace();}
+		}
+		mav.addObject("projectDetail", makeProjectList(projectDetail));
+	}
+	
+	private String makeProjectList(List<ProjectB> list) {
+		StringBuffer sb = new StringBuffer();
+		sb.append("<input type=\"button\" name=\"up\" placeholder=\"null\" class=\"btn button\" value=\"▲\">\r\n"
+				+ "  			<input type=\"button\" name=\"down\" placeholder=\"null\" class=\"btn button\" value=\"▼\">\r\n"
+				+ "  			<div id=\"subProjectList\" class=\"null\" value=\"null\">\r\n");
+		for(ProjectB pb: list) {
+			int i = 0;
+			sb.append("  				<div id=\"projectThumb" + i + "\" class=\"projectThumbOn\" value=\"null\">\r\n"
+					+ "  					<div id=\"projectName\" class=\"bigAss\" value=\"null\">taehoon test</div>\r\n"
+					+ "  					<div id=\"projectCode0\" class=\"projectCode\" value=\"null\">22072914170220220708</div>\r\n"
+					+ "  					<div id=\"memberCount0\" class=\"memberCount\" value=\"null\">멤버수 :2</div>\r\n"
+					+ "  					<div id=\"managerName0\" class=\"managerName\" value=\"null\">매니저 :태훈</div>\r\n"
+					+ "  					<div id=\"period0\" class=\"period\" value=\"null\">기간: 2022-07-29 ~ 2022-07-29</div>\r\n"
+					+ "  					<div id=\"projectComment0\" class=\"projectComment\" value=\"null\">상세: test</div>\r\n"
+					+ "  					<input type=\"button\" name=\"member0\" placeholder=\"null\" class=\"stn button\" value=\"멤버관리\">\r\n"
+					+ "  					<input type=\"button\" name=\"job0\" placeholder=\"null\" class=\"stn button\" value=\"업무관리\">\r\n"
+					+ "  					<input type=\"button\" name=\"progress0\" placeholder=\"null\" class=\"stn button\" value=\"결과관리\">\r\n"
+					+ "  					<input type=\"button\" name=\"progress0\" placeholder=\"null\" class=\"stn button\" value=\"진행도관리\">\r\n"
+					+ "  				</div>\r\n");
+			i++;
+		}
+		sb.append( "			</div>");
+		/*
+  			<input type="button" name="up" placeholder="null" class="btn button" value="▲">
+  			<input type="button" name="down" placeholder="null" class="btn button" value="▼">
+  			<div id="subProjectList" class="null" value="null">
+  				<div id="projectThumb0" class="projectThumbOn" value="null">
+  					<div id="projectName0" class="bigAss" value="null">taehoon test</div>
+  					<div id="projectCode0" class="projectCode" value="null">22072914170220220708</div>
+  					<div id="memberCount0" class="memberCount" value="null">멤버수 :2</div>
+  					<div id="managerName0" class="managerName" value="null">매니저 :태훈</div>
+  					<div id="period0" class="period" value="null">기간: 2022-07-29 ~ 2022-07-29</div>
+  					<div id="projectComment0" class="projectComment" value="null">상세: test</div>
+  					<input type="button" name="member0" placeholder="null" class="stn button" value="멤버관리">
+  					<input type="button" name="job0" placeholder="null" class="stn button" value="업무관리">
+  					<input type="button" name="progress0" placeholder="null" class="stn button" value="결과관리">
+  					<input type="button" name="progress0" placeholder="null" class="stn button" value="진행도관리">
+  				</div>
+			</div>
+		 */
+		
+		return sb.toString();
+	}
+	private void resultMgr(ModelAndView mav) {
+		System.out.println("Management/resultMgr");
+		mav.setViewName("result");
 	}
 	
 	private void updModule(Model model) {
