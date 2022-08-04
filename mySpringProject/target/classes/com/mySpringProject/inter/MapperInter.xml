@@ -10,7 +10,11 @@
 		<result column="PRO_START" property="startDate" />
 		<result column="PRO_END" property="endDate" />
 		<result column="PRO_VISIBLE" property="isVisible" />
-		<collection property="projectMembers" javaType="java.util.ArrayList" column="PRO_CODE" ofType="com.mySpringProject.beans.ProMemB" select="getProjectMembersHoon"></collection>
+		<collection property="projectMembers" javaType="java.util.ArrayList" column="projectCode=PRO_CODE" ofType="com.mySpringProject.beans.ProMemB" select="getProjectMembersHoon"></collection>
+		<collection property="modules" javaType="java.util.ArrayList" column="projectCode=PRO_CODE" ofType="com.mySpringProject.beans.MouB" select="getModuleList"></collection>
+		<collection property="jobs" javaType="java.util.ArrayList" column="projectCode=PRO_CODE" ofType="com.mySpringProject.beans.JobB" select="getJobList"></collection>
+		<collection property="mojos" javaType="java.util.ArrayList" column="projectCode=PRO_CODE" ofType="com.mySpringProject.beans.MoJoB" select="getMoJoList"></collection>				
+		<collection property="methods" javaType="java.util.ArrayList" column="projectCode=PRO_CODE" ofType="com.mySpringProject.beans.MethodB" select="getMethodList"></collection>
 	</resultMap>
 	<resultMap id="getProjectDetailMap" type="com.mySpringProject.beans.ProjectB">
 		<id column="PRO_CODE" property="projectCode" />
@@ -19,6 +23,7 @@
 		<result column="PRO_START" property="startDate" />
 		<result column="PRO_END" property="endDate" />
 		<result column="PRO_VISIBLE" property="isVisible" />
+		<collection property="projectMemberss" javaType="java.util.ArrayList" column="projectCode=PRO_CODE" ofType="com.mySpringProject.beans.ProMemB" select="getProjectMemberss"></collection>
 		<collection property="modules" javaType="java.util.ArrayList" column="projectCode=PRO_CODE" ofType="com.mySpringProject.beans.MouB" select="getModuleList"></collection>
 		<collection property="jobs" javaType="java.util.ArrayList" column="projectCode=PRO_CODE" ofType="com.mySpringProject.beans.JobB" select="getJobList"></collection>
 		<collection property="mojos" javaType="java.util.ArrayList" column="projectCode=PRO_CODE" ofType="com.mySpringProject.beans.MoJoB" select="getMoJoList"></collection>				
@@ -156,6 +161,15 @@
 		FROM PRO 
 		WHERE PRO_CODE = #{projectCode}
 	</select>
+	<select id="getProjectMemberss" parameterType="java.util.HashMap" resultType="com.mySpringProject.beans.ProMemB">
+		SELECT PRM_PROCODE AS PROJECTCODE,
+		PRM_PMBCODE AS PMBCODE,
+		PMB_NAME AS PMBNAME,
+		PRM_POSITION AS POSITION,
+		PRM_ACCEPT AS ISACCEPT
+		FROM PRM INNER JOIN PMB ON PRM_PMBCODE = PMB_CODE
+		WHERE PRM_PROCODE = #{projectCode}
+	</select>
 	<select id="getModuleList" parameterType="java.util.HashMap" resultType="com.mySpringProject.beans.MouB">
 		SELECT MOU_PROCODE AS PROJECTCODE, MOU_CODE AS MODULECODE, MOU_NAME AS MODULENAME, MOU_COMMENTS AS MODULECOMMENT
 		FROM MOU WHERE MOU_PROCODE = #{projectCode}
@@ -176,8 +190,8 @@
 		MJ_PRMPMBCODE AS PMBCODE, 
 		PMB_NAME AS PMBNAME
 		FROM MJ INNER JOIN PMB ON MJ_PRMPMBCODE = PMB_CODE
-		INNER JOIN MOU ON MJ_MOUCODE = MOU_CODE
-		INNER JOIN JOS ON MJ_JOSCODE = JOS_CODE
+		INNER JOIN MOU ON MJ_MOUCODE = MOU_CODE AND MOU_PROCODE = MJ_PROCODE
+		INNER JOIN JOS ON MJ_JOSCODE = JOS_CODE AND JOS_PROCODE = MJ_PROCODE
 		WHERE MJ_PROCODE = #{projectCode}  
 	</select>
 	<select id="getMethodList" parameterType="java.util.HashMap" resultType="com.mySpringProject.beans.MethodB">
@@ -189,8 +203,8 @@
 		MET_CODE AS METHODCODE, 
 		MET_NAME AS METHODNAME, 
 		MET_MCCODE AS MCCODE
-		FROM MET INNER JOIN MOU ON MET_MJMOUCODE = MOU_CODE
-		INNER JOIN JOS ON MET_MJJOSCODE = JOS_CODE
+		FROM MET INNER JOIN MOU ON MET_MJMOUCODE = MOU_CODE AND MET_MJPROCODE = MOU_PROCODE
+		INNER JOIN JOS ON MET_MJJOSCODE = JOS_CODE AND JOS_PROCODE = MET_MJPROCODE
 		WHERE MET_MJPROCODE = #{projectCode}
 	</select>	
 	
@@ -264,7 +278,53 @@
 	<select id="getProjectMembers3" parameterType="com.mySpringProject.beans.ProMemB" resultType="com.mySpringProject.beans.ProMemB">
 		SELECT PRM_PMBCODE AS PMBCODE, PRM_ACCEPT AS ISACCEPT FROM PRM WHERE PRM_PROCODE = #{projectCode}
 	</select>
-		
+	
+	<select id="getMethodsOnMJMC" parameterType="com.mySpringProject.beans.MethodB" resultType="com.mySpringProject.beans.MethodB">
+        SELECT MET_MJPROCODE AS PROJECTCODE, 
+		MET_MJMOUCODE AS MODULECODE, 
+		MOU_NAME AS MODULENAME,
+		MET_MJJOSCODE AS JOBCODE,
+		JOS_NAME AS JOBNAME,
+		MET_CODE AS METHODCODE, 
+		MET_NAME AS METHODNAME, 
+		MET_MCCODE AS MCCODE
+		FROM MET INNER JOIN MOU ON MET_MJMOUCODE = MOU_CODE AND MET_MJPROCODE = MOU_PROCODE
+		INNER JOIN JOS ON MET_MJJOSCODE = JOS_CODE AND JOS_PROCODE = MET_MJPROCODE
+		WHERE MET_MJPROCODE = #{projectCode}
+		AND MET_MJMOUCODE = #{moduleCode} 
+		AND MET_MJJOSCODE = #{jobCode} 
+		AND MET_MCCODE = #{mcCode}
+	</select>
+	<select id="getMethodsOnMJ" parameterType="com.mySpringProject.beans.MethodB" resultType="com.mySpringProject.beans.MethodB">
+        SELECT MET_MJPROCODE AS PROJECTCODE, 
+		MET_MJMOUCODE AS MODULECODE, 
+		MOU_NAME AS MODULENAME,
+		MET_MJJOSCODE AS JOBCODE,
+		JOS_NAME AS JOBNAME,
+		MET_CODE AS METHODCODE, 
+		MET_NAME AS METHODNAME, 
+		MET_MCCODE AS MCCODE
+		FROM MET INNER JOIN MOU ON MET_MJMOUCODE = MOU_CODE AND MET_MJPROCODE = MOU_PROCODE
+		INNER JOIN JOS ON MET_MJJOSCODE = JOS_CODE AND JOS_PROCODE = MET_MJPROCODE
+		WHERE MET_MJPROCODE = #{projectCode}
+		AND MET_MJMOUCODE = #{moduleCode} 
+		AND MET_MJJOSCODE = #{jobCode}
+	</select>
+	<update id="BF" parameterType="com.mySpringProject.beans.MethodB">		
+		UPDATE MET SET MET_STATE = 'BF'
+		WHERE MET_MJPROCODE = #{projectCode} AND MET_MJMOUCODE = #{moduleCode} AND MET_MJJOSCODE = #{jobCode}
+		AND MET_CODE = #{methodCode}	
+	</update>	
+	<update id="IN" parameterType="com.mySpringProject.beans.MethodB">		
+		UPDATE MET SET MET_STATE = 'IN'
+		WHERE MET_MJPROCODE = #{projectCode} AND MET_MJMOUCODE = #{moduleCode} AND MET_MJJOSCODE = #{jobCode}
+		AND MET_CODE = #{methodCode}	
+	</update>	
+	<update id="CP" parameterType="com.mySpringProject.beans.MethodB">		
+		UPDATE MET SET MET_STATE = 'CP'
+		WHERE MET_MJPROCODE = #{projectCode} AND MET_MJMOUCODE = #{moduleCode} AND MET_MJJOSCODE = #{jobCode}
+		AND MET_CODE = #{methodCode}	
+	</update>			
 </mapper>
 	<!--  <update id="insProjectMembers" parameterType="com.mySpringProject.beans.ProjectB">
 		<foreach item="pm" collection="projectMembers" separator=" " open="INSERT ALL" close="SELECT * FROM DUAL">

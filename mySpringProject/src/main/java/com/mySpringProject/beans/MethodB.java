@@ -12,4 +12,5 @@ public class MethodB {
 	private String methodCode;
 	private String methodName;
 	private String mcCode;
+	private String methodState;
 }

@@ -13,6 +13,7 @@ public class ProjectB {
 	private String endDate;
 	private String isVisible;
 	private List<ProMemB> projectMembers;
+	private List<ProMemB> projectMemberss;
 	private List<MouB> modules;
 	private List<JobB> jobs;
 	private List<MoJoB> mojos;

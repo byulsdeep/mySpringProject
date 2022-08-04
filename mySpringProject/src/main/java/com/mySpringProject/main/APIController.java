@@ -232,4 +232,40 @@ public class APIController {
 		mgr.backController(13, model);
 		return (List<MethodB>)model.getAttribute("methodList");
 	}
+	
+	@PostMapping("/GetMethodsOnMJ")
+	public List<MethodB> getMethodsOnMJ(Model model, @ModelAttribute MethodB mt) {
+		System.out.println("GetMethodsOnMJ");	
+		model.addAttribute(mt);
+		mgr.backController(14, model);
+		return (List<MethodB>)model.getAttribute("methodsOnMJ");
+	}
+	@PostMapping("/GetMethodsOnMJMC")
+	public List<MethodB> getMethodsOnMJMC(Model model, @ModelAttribute MethodB mt) {
+		System.out.println("GetMethodsOnMJMC");	
+		model.addAttribute(mt);
+		mgr.backController(15, model);
+		return (List<MethodB>)model.getAttribute("methodsOnMJMC");
+	}
+	@PostMapping("/BF")
+	public List<MethodB> BF(Model model, @ModelAttribute MethodB mt) {
+		System.out.println("BF");	
+		model.addAttribute(mt);
+		mgr.backController(16, model);
+		return (List<MethodB>)model.getAttribute("methods");
+	}
+	@PostMapping("/IN")
+	public List<MethodB> IN(Model model, @ModelAttribute MethodB mt) {
+		System.out.println("IN");	
+		model.addAttribute(mt);
+		mgr.backController(17, model);
+		return (List<MethodB>)model.getAttribute("methods");
+	}
+	@PostMapping("/CP")
+	public List<MethodB> CP(Model model, @ModelAttribute MethodB mt) {
+		System.out.println("CP");	
+		model.addAttribute(mt);
+		mgr.backController(18, model);
+		return (List<MethodB>)model.getAttribute("methods");
+	}
 }

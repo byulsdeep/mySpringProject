@@ -55,6 +55,7 @@ public interface MapperInter {
 	
 	public List<ProjectB> getProjectDetail(ProjectB pro);
 	
+	public List<ProMemB> getProjectMemberss(HashMap map);
 	public List<MouB> getModuleList(HashMap map);
 	public List<JobB> getJobList(HashMap map);
 	public List<MoJoB> getMoJoList(HashMap map);
@@ -75,4 +76,13 @@ public interface MapperInter {
 	public int updMethods(MethodB mt);
 	public int delMethods(MethodB mt);
 	public int insMethods(MethodB mt);
+	
+	public List<MethodB> getMethodsOnMJ(MethodB mt);
+	public List<MethodB> getMethodsOnMJMC(MethodB mt);
+	
+	public int BF(MethodB mt);
+	public int IN(MethodB mt);
+	public int CP(MethodB mt);
+
+	
 }
