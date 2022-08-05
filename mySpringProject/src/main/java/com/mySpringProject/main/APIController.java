@@ -238,6 +238,11 @@ public class APIController {
 		System.out.println("GetMethodsOnMJ");	
 		model.addAttribute(mt);
 		mgr.backController(14, model);
+		
+		for(MethodB me:(List<MethodB>)model.getAttribute("methodsOnMJ")) {
+			System.out.println("GetMethodsOnMJ" + me.getMethodState());
+		}
+		
 		return (List<MethodB>)model.getAttribute("methodsOnMJ");
 	}
 	@PostMapping("/GetMethodsOnMJMC")
@@ -245,6 +250,11 @@ public class APIController {
 		System.out.println("GetMethodsOnMJMC");	
 		model.addAttribute(mt);
 		mgr.backController(15, model);
+		
+		for(MethodB me:(List<MethodB>)model.getAttribute("methodsOnMJMC")) {
+			System.out.println("GetMethodsOnMJMC" + me.getMethodState());
+		}
+		
 		return (List<MethodB>)model.getAttribute("methodsOnMJMC");
 	}
 	@PostMapping("/BF")
@@ -266,6 +276,18 @@ public class APIController {
 		System.out.println("CP");	
 		model.addAttribute(mt);
 		mgr.backController(18, model);
+		return (List<MethodB>)model.getAttribute("methods");
+	}
+	@PostMapping("/GetMethodsOnMC")
+	public List<MethodB> getMethodsOnMC(Model model, @ModelAttribute MethodB mt) {
+		System.out.println("GetMethodsOnMC");	
+		model.addAttribute(mt);
+		mgr.backController(19, model);
+		
+		for(MethodB me:(List<MethodB>)model.getAttribute("methods")) {
+			System.out.println("GetMethodsOnMC" + me.getMethodState());
+		}
+		
 		return (List<MethodB>)model.getAttribute("methods");
 	}
 }

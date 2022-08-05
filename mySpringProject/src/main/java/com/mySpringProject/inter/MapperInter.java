@@ -77,6 +77,7 @@ public interface MapperInter {
 	public int delMethods(MethodB mt);
 	public int insMethods(MethodB mt);
 	
+	public List<MethodB> getMethodsOnMC(MethodB mt);
 	public List<MethodB> getMethodsOnMJ(MethodB mt);
 	public List<MethodB> getMethodsOnMJMC(MethodB mt);
 	

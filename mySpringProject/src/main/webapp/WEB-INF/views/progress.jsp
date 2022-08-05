@@ -14,6 +14,7 @@
 <script src="/res/js/common.js"></script>
 <script>
 let projectCode;
+let selectedMJ = [];
 
 function init(){
 	const message = "${message}";
@@ -28,22 +29,25 @@ function changeProject() {
 	form.submit();
 }
 function getMethodsOnMJMC(mc) {
-	let arr = [];
-	let ang = document.getElementsByName("ang")[0].value;    
-	for(i = 0; i < ang; i++) {
-		arr.push(document.getElementById("method" + i));
+	if(selectedMJ[0] == null || selectedMJ[0] == "") {
+		clientData = "";
+		clientData += "projectCode=" + projectCode;
+		clientData += "&mcCode=" + mc;
+		postAjaxJson("GetMethodsOnMC", clientData, "gotMCMethods");
+	} else {
+		clientData = "";
+		clientData += "projectCode=" + projectCode;
+		clientData += "&moduleCode=" + selectedMJ[0] + "&jobCode=" + selectedMJ[1];
+		clientData += "&mcCode=" + mc;
+		postAjaxJson("GetMethodsOnMJMC", clientData, "gotMCMethods");
 	}
-	clientData = "";
-	clientData += "projectCode=" + projectCode;
-	for(j = 0; j < arr.length; j++) {
-		clientData += "&moduleCode=" + arr[j].value.split(":")[0] + "&jobCode=" + arr[j].value.split(":")[1] + "&mcCode=" + mc;
-	}
-	postAjaxJson("GetMethodsOnMJMC", clientData, "gotMethods");
 }
 function getMethodsOnMJ(obj) {
 	let hoe = obj.children[0].value;
 	let arr = hoe.split(":");
 	let gimotti = document.getElementsByName("gimotti")[0].value;       
+	
+	selectedMJ = arr;
 	
 	clientData = "";
 	clientData += "projectCode=" + projectCode;
@@ -54,6 +58,119 @@ function getMethodsOnMJ(obj) {
 function gotMethods(ajaxData) {
 	let methods = JSON.parse(ajaxData);
 	createMethods(methods);
+	createMVC(methods);
+}
+function gotMCMethods(ajaxData) {
+	let methods = JSON.parse(ajaxData);
+	createMethods(methods);
+}
+function createMVC(methods) {
+	let bfct = 0; let bfmo = 0; let bfrd = 0; let bfvi = 0;
+	let inct = 0; let inmo = 0; let inrd = 0; let invi = 0;
+	let cpct = 0; let cpmo = 0; let cprd = 0; let cpvi = 0;
+	let ct = 0; let mo = 0; let rd = 0; let vi = 0; let el = 0;
+	if(methods != null && methods != "") {
+		for(i = 0; i < methods.length; i++) {
+			if(methods[i].mcCode == "CT") {
+				ct++;
+			} else if (methods[i].mcCode == "MO") {
+				mo++;
+			} else if (methods[i].mcCode == "RD") {
+				rd++;
+			} else if (methods[i].mcCode == "VI") {
+				vi++;
+			} else {
+				el++;
+			}		
+			if(methods[i].methodState == "BF" && methods[i].mcCode == "CT") {
+				bfct++;
+			} else if(methods[i].methodState == "BF" && methods[i].mcCode == "MO") {
+				bfmo++;
+			} else if(methods[i].methodState == "BF" && methods[i].mcCode == "RD") {
+				bfrd++;
+			} else if(methods[i].methodState == "BF" && methods[i].mcCode == "VI") {
+				bfvi++;
+			} else if(methods[i].methodState == "IN" && methods[i].mcCode == "CT") {
+				inct++;
+			} else if(methods[i].methodState == "IN" && methods[i].mcCode == "MO") {
+				inmo++;
+			} else if(methods[i].methodState == "IN" && methods[i].mcCode == "RD") {
+				inrd++;
+			} else if(methods[i].methodState == "IN" && methods[i].mcCode == "VI") {
+				invi++;
+			} else if(methods[i].methodState == "CP" && methods[i].mcCode == "CT") {
+				cpct++;
+			} else if(methods[i].methodState == "CP" && methods[i].mcCode == "MO") {
+				cpmo++;
+			} else if(methods[i].methodState == "CP" && methods[i].mcCode == "RD") {
+				cprd++;
+			} else if(methods[i].methodState == "CP" && methods[i].mcCode == "VI") {
+				cpvi++;
+			}
+		}		
+	}
+	let ctDiv = document.createElement("div");
+	if(cpct == ct && cpct != 0) {
+		ctDiv.innerHTML = "<div class=\"btn cp\" onClick=\"getMethodsOnMJMC('CT')\"> CONTROLLER"
+			+ "<br>개발전: " + bfct + "<br>개발진행중: " + inct + "<br>개발완료: " + cpct + " / " + ct + ""
+			+ "</div>\r\n";
+	} else if(inct > 0) {
+		ctDiv.innerHTML = "<div class=\"btn in\" onClick=\"getMethodsOnMJMC('CT')\"> CONTROLLER"
+			+ "<br>개발전: " + bfct + "<br>개발진행중: " + inct + "<br>개발완료: " + cpct + " / " + ct + ""
+			+ "</div>\r\n";
+	} else {
+		ctDiv.innerHTML = "<div class=\"btn button\" onClick=\"getMethodsOnMJMC('CT')\"> CONTROLLER"
+			+ "<br>개발전: " + bfct + "<br>개발진행중: " + inct + "<br>개발완료: " + cpct + " / " + ct + ""
+			+ "</div>\r\n";
+	}
+	let moDiv = document.createElement("div");
+	if(cpmo == mo && cpmo !=0) {
+		moDiv.innerHTML = "<div class=\"btn cp\" onClick=\"getMethodsOnMJMC('MO')\"> SERVICES"
+		+ "<br>개발전: " + bfmo + "<br>개발진행중: " + inmo + "<br>개발완료: " + cpmo + " / " + mo + ""
+		+ "</div>\r\n";
+	} else if(inmo > 0) {
+		moDiv.innerHTML = "<div class=\"btn in\" onClick=\"getMethodsOnMJMC('MO')\"> SERVICES"
+			+ "<br>개발전: " + bfmo + "<br>개발진행중: " + inmo + "<br>개발완료: " + cpmo + " / " + mo + ""
+			+ "</div>\r\n";
+	} else {
+		moDiv.innerHTML = "<div class=\"btn button\" onClick=\"getMethodsOnMJMC('MO')\"> SERVICES"
+			+ "<br>개발전: " + bfmo + "<br>개발진행중: " + inmo + "<br>개발완료: " + cpmo + " / " + mo + ""
+			+ "</div>\r\n";
+	}
+	let rdDiv = document.createElement("div");
+	if(cprd == rd && cprd != 0) {
+		rdDiv.innerHTML = "<div class=\"btn cp\" onClick=\"getMethodsOnMJMC('RD')\"> DAO"
+		+ "<br>개발전: " + bfrd + "<br>개발진행중: " + inrd + "<br>개발완료: " + cprd + " / " + rd + ""
+		+ "</div>\r\n";
+	} else if(inrd > 0) {
+		rdDiv.innerHTML = "<div class=\"btn in\" onClick=\"getMethodsOnMJMC('RD')\"> DAO"
+			+ "<br>개발전: " + bfrd + "<br>개발진행중: " + inrd + "<br>개발완료: " + cprd + " / " + rd + ""
+			+ "</div>\r\n";
+	} else {
+		rdDiv.innerHTML = "<div class=\"btn button\" onClick=\"getMethodsOnMJMC('RD')\"> DAO"
+			+ "<br>개발전: " + bfrd + "<br>개발진행중: " + inrd + "<br>개발완료: " + cprd + " / " + rd + ""
+			+ "</div>\r\n";
+	}
+	let viDiv = document.createElement("div");
+	if(cpvi == vi && cpvi != 0) {
+		viDiv.innerHTML = "<div class=\"btn cp\" onClick=\"getMethodsOnMJMC('VI')\"> VIEW"
+		+ "<br>개발전: " + bfvi + "<br>개발진행중: " + invi + "<br>개발완료: " + cpvi + " / " + vi + ""
+		+ "</div>";
+	} else if(invi > 0) {
+		viDiv.innerHTML = "<div class=\"btn in\" onClick=\"getMethodsOnMJMC('VI')\"> VIEW"
+			+ "<br>개발전: " + bfvi + "<br>개발진행중: " + invi + "<br>개발완료: " + cpvi + " / " + vi + ""
+			+ "</div>";
+	} else {
+		viDiv.innerHTML = "<div class=\"btn button\" onClick=\"getMethodsOnMJMC('VI')\"> VIEW"
+			+ "<br>개발전: " + bfvi + "<br>개발진행중: " + invi + "<br>개발완료: " + cpvi + " / " + vi + ""
+			+ "</div>";
+	}
+	let mainDiv = document.getElementById("newInvite");
+	mainDiv.innerHTML = "";
+	mainDiv.appendChild(ctDiv);
+	mainDiv.appendChild(moDiv);
+	mainDiv.appendChild(rdDiv);
+	mainDiv.appendChild(viDiv);
 }
 function createMethods(methods) {
 	let mainDiv = document.getElementById("eeeee");
@@ -63,9 +180,16 @@ function createMethods(methods) {
 	let button = [];
 	if(methods != null && methods != "") {
 		for(i = 0; i < methods.length; i++) {
-			subDiv[i] = createDiv("", "stn button", methods[i].methodName, "");
-			button[i] = createDiv(null, null, "<input class=\"button stn\" type=\"button\" value=\"상태변경\" onClick=\"changeState(" + i + ")\">", null);
-	
+			if(methods[i].methodState == "CP") {
+				subDiv[i] = createDiv("", "stn cp", methods[i].methodName, "");
+				button[i] = createDiv(null, null, "<input class=\"cp stn\" type=\"button\" value=\"상태변경\" onClick=\"changeState(" + i + ")\">", null);
+			} else if(methods[i].methodState == "IN") {
+				subDiv[i] = createDiv("", "stn in", methods[i].methodName, "");
+				button[i] = createDiv(null, null, "<input class=\"in stn\" type=\"button\" value=\"상태변경\" onClick=\"changeState(" + i + ")\">", null);
+			} else {
+				subDiv[i] = createDiv("", "stn button", methods[i].methodName, "");
+				button[i] = createDiv(null, null, "<input class=\"button stn\" type=\"button\" value=\"상태변경\" onClick=\"changeState(" + i + ")\">", null);
+			}
 			input[i] = createInput("hidden", "", "", "", methods[i].moduleCode + ":" + methods[i].jobCode + ":" + methods[i].methodCode + ":" + methods[i].mcCode, null);
 			input[i].setAttribute("id", "method" +i);
 			subDiv[i].appendChild(input[i]);
@@ -110,7 +234,6 @@ function changeBF(num) {
 	clientData += "&moduleCode=" + arr[0] + "&jobCode=" + arr[1];
 	clientData += "&methodCode=" + arr[2] + "&mcCode=" + arr[3];
 	clientData += "&methodState=" + "BF";
-	alert(clientData);
 	postAjaxJson("BF", clientData, "gotMethods");
 	closeCanvas();
 }
@@ -162,10 +285,19 @@ function changeCP(num) {
   	</div>
   	<div>
   		<div id="newInvite">
-			<div class="btn button" onClick="getMethodsOnMJMC('CT')"> CONTROLLER </div>
-			<div class="btn button" onClick="getMethodsOnMJMC('MO')"> SERVICES </div>
-			<div class="btn button" onClick="getMethodsOnMJMC('RD')"> DAO </div>
-			<div class="btn button" onClick="getMethodsOnMJMC('VI')"> VIEW </div>
+  		${mvcStyle}
+		<!-- 	<div class="btn button" onClick="getMethodsOnMJMC('CT')"> CONTROLLER 
+				<br>개발전:<br>개발진행중:<br>개발완료:/
+			</div>
+			<div class="btn button" onClick="getMethodsOnMJMC('MO')"> SERVICES
+				<br>개발전:<br>개발진행중:<br>개발완료:/
+			 </div>
+			<div class="btn button" onClick="getMethodsOnMJMC('RD')"> DAO
+				<br>개발전:<br>개발진행중:<br>개발완료:/
+			 </div>
+			<div class="btn button" onClick="getMethodsOnMJMC('VI')"> VIEW
+				<br>개발전:<br>개발진행중:<br>개발완료:/
+			 </div>  -->
   		</div>
   	</div>
   	<div>
