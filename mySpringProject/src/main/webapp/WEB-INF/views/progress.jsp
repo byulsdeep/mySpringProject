@@ -178,28 +178,60 @@ function createMethods(methods) {
 	let subDiv = [];
 	let input = [];
 	let button = [];
+	let up = [];
 	if(methods != null && methods != "") {
 		for(i = 0; i < methods.length; i++) {
 			if(methods[i].methodState == "CP") {
 				subDiv[i] = createDiv("", "stn cp", methods[i].methodName, "");
 				button[i] = createDiv(null, null, "<input class=\"cp stn\" type=\"button\" value=\"상태변경\" onClick=\"changeState(" + i + ")\">", null);
+				up[i] = createDiv(null, null, "<input class=\"cp stn\" type=\"button\" value=\"파일추가\" onClick=\"upload(" + i + ")\">", null);
 			} else if(methods[i].methodState == "IN") {
 				subDiv[i] = createDiv("", "stn in", methods[i].methodName, "");
 				button[i] = createDiv(null, null, "<input class=\"in stn\" type=\"button\" value=\"상태변경\" onClick=\"changeState(" + i + ")\">", null);
+				up[i] = createDiv(null, null, "<input class=\"in stn\" type=\"button\" value=\"파일추가\" onClick=\"upload(" + i + ")\">", null);
 			} else {
 				subDiv[i] = createDiv("", "stn button", methods[i].methodName, "");
 				button[i] = createDiv(null, null, "<input class=\"button stn\" type=\"button\" value=\"상태변경\" onClick=\"changeState(" + i + ")\">", null);
+				up[i] = createDiv(null, null, "<input class=\"button stn\" type=\"button\" value=\"파일추가\" onClick=\"upload(" + i + ")\">", null);
 			}
 			input[i] = createInput("hidden", "", "", "", methods[i].moduleCode + ":" + methods[i].jobCode + ":" + methods[i].methodCode + ":" + methods[i].mcCode, null);
 			input[i].setAttribute("id", "method" +i);
 			subDiv[i].appendChild(input[i]);
 			subDiv[i].appendChild(button[i]);
+			subDiv[i].appendChild(up[i]);
 			mainDiv.appendChild(subDiv[i]);
 		}
 		let newAng = createInput("hidden", "ang", "", "", methods.length, null);
 		mainDiv.appendChild(newAng);
 	} else mainDiv.innerHTML = "NULL";
 }
+function upload(num) {
+	lightBoxCtl('파일추가', true);
+	let cbody = document.getElementById("cbody");
+	cbody.innerHTML = "";
+	let box = [];
+	box.push(createInput("text", "fileName", "파일이름", "box", null, null));
+	box.push(createInput("text", "fileLocation", "파일위치", "box", null, null));
+	box.push(createInput("button", "button", null, "btn button", "확인", null));	
+	box[2].addEventListener("click", function(){
+		sendFile(num, box[0].value, box[1].value);
+		});
+	box.push(createInput("button", "button", null, "btn button", "취소", null));	
+	box[3].addEventListener("click", function(){
+		closeCanvas();
+		});
+	for(i=0; i<box.length; i++) {
+		cbody.appendChild(box[i]);
+	}
+}
+function sendFile(num, name, location) {
+	closeCanvas();
+	let fileDiv = document.getElementById("fffff");
+	let div = document.createElement("div");
+	div.innerHTML = "<div class=\"newThumb\">파일이름: " + name + "<br>파일경로: " + location + "</div>"
+	fileDiv.appendChild(div);
+}
+
 function changeState(num) {
 	lightBoxCtl('상태변경', true);
 	let cbody = document.getElementById("cbody");
@@ -286,18 +318,6 @@ function changeCP(num) {
   	<div>
   		<div id="newInvite">
   		${mvcStyle}
-		<!-- 	<div class="btn button" onClick="getMethodsOnMJMC('CT')"> CONTROLLER 
-				<br>개발전:<br>개발진행중:<br>개발완료:/
-			</div>
-			<div class="btn button" onClick="getMethodsOnMJMC('MO')"> SERVICES
-				<br>개발전:<br>개발진행중:<br>개발완료:/
-			 </div>
-			<div class="btn button" onClick="getMethodsOnMJMC('RD')"> DAO
-				<br>개발전:<br>개발진행중:<br>개발완료:/
-			 </div>
-			<div class="btn button" onClick="getMethodsOnMJMC('VI')"> VIEW
-				<br>개발전:<br>개발진행중:<br>개발완료:/
-			 </div>  -->
   		</div>
   	</div>
   	<div>

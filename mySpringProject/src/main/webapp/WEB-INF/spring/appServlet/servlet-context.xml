@@ -30,6 +30,8 @@
 
 	<beans:bean id="chatHandler" class="com.mySpringProject.main.ChatHandler" />
 	
+	<!-- Multipart Resolver -->
+	<beans:bean id="myMultipartResolver" class="org.springframework.web.multipart.support.StandardServletMultipartResolver"></beans:bean>
 	<context:component-scan base-package="com.mySpringProject.main" />
 	<context:component-scan base-package="com.mySpringProject.services" />
 	<context:component-scan base-package="com.mySpringProject.utils" />

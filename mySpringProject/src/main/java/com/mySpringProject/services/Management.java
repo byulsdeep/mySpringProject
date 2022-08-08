@@ -219,18 +219,21 @@ public class Management implements ServicesRule{
 			if(mt.getMethodState().equals("CP")) {
 				sb.append("<div class=\"stn cp\" \">" + mt.getMethodName() + ""			
 						+ "<input id=\"method" + i + "\" type=\"hidden\" value=\"" + st + "\">"
-						+ "<div><input class=\"cp stn\" type=\"button\" value=\"상태변경\" onClick=\"changeState(" + i + ")\">"
-								+ "</div></div>");
+						+ "<div><input class=\"cp stn\" type=\"button\" value=\"상태변경\" onClick=\"changeState(" + i + ")\"></div>"
+						+ "<div><input class=\"cp stn\" type=\"button\" value=\"파일추가\" onClick=\"upload(" + i + ")\"></div>"
+								+ "</div>");
 			} else if (mt.getMethodState().equals("IN")) {
 				sb.append("<div class=\"stn in\" \">" + mt.getMethodName() + ""			
 						+ "<input id=\"method" + i + "\" type=\"hidden\" value=\"" + st + "\">"
-						+ "<div><input class=\"in stn\" type=\"button\" value=\"상태변경\" onClick=\"changeState(" + i + ")\">"
-								+ "</div></div>");
+						+ "<div><input class=\"in stn\" type=\"button\" value=\"상태변경\" onClick=\"changeState(" + i + ")\"></div>"
+						+ "<div><input class=\"in stn\" type=\"button\" value=\"파일추가\" onClick=\"upload(" + i + ")\"></div>"
+								+ "</div>");
 			} else {
 				sb.append("<div class=\"stn button\" \">" + mt.getMethodName() + ""			
 						+ "<input id=\"method" + i + "\" type=\"hidden\" value=\"" + st + "\">"
-						+ "<div><input class=\"button stn\" type=\"button\" value=\"상태변경\" onClick=\"changeState(" + i + ")\">"
-								+ "</div></div>");
+						+ "<div><input class=\"button stn\" type=\"button\" value=\"상태변경\" onClick=\"changeState(" + i + ")\"></div>"
+						+ "<div><input class=\"button stn\" type=\"button\" value=\"파일추가\" onClick=\"upload(" + i + ")\"></div>"
+								+ "</div>");
 			}	
 			i++;	
 		}
@@ -374,26 +377,18 @@ public class Management implements ServicesRule{
 				+ "  					<div id=\"projectCode0\" class=\"projectCode\" value=\"null\">" + pb.getProjectCode() + "</div>\r\n");		
 		sb.append("  					<div id=\"memberCount0\" class=\"memberCount\" value=\"null\">멤버수 :" + pb.getProjectMemberss().size() + "</div>\r\n");
 		for(int i = 0; i < pb.getProjectMemberss().size(); i++) {
-			System.out.println("---------");
-			System.out.println(pb.getProjectMemberss().get(i).getPmbName());
-			System.out.println(pb.getProjectMemberss().get(i).getPmbCode());
-			System.out.println(pb.getProjectMemberss().get(i).getPosition());
 			try {
-				System.out.println(enc.aesDecode(pb.getProjectMemberss().get(i).getPmbName(), pb.getProjectMemberss().get(i).getPmbCode()));
-			} catch (InvalidKeyException | UnsupportedEncodingException | NoSuchAlgorithmException
-					| NoSuchPaddingException | InvalidAlgorithmParameterException | IllegalBlockSizeException
-					| BadPaddingException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
-			try {
-				st = ((pb.getProjectMemberss().get(i).getPosition()).equals("MG"))?
-								       "<div id=\"managerName0\" class=\"managerName\" value=\"null\">매니저 :" + enc.aesDecode(pb.getProjectMemberss().get(i).getPmbName(), pb.getProjectMemberss().get(i).getPmbCode()) + "</div>\r\n" : null;
+				if(pb.getProjectMemberss().get(i).getPosition().equals("MG")) {
+									st = "<div id=\"managerName0\" class=\"managerName\" value=\"null\">매니저 :" + enc.aesDecode(pb.getProjectMemberss().get(i).getPmbName(), pb.getProjectMemberss().get(i).getPmbCode()) + "</div>\r\n";
+					break;
+				} else {
+									st = "<div id=\"managerName0\" class=\"managerName\" value=\"null\">매니저 : 없음 </div>\r\n";
+				}
 			} catch (InvalidKeyException | UnsupportedEncodingException | NoSuchAlgorithmException
 					| NoSuchPaddingException | InvalidAlgorithmParameterException | IllegalBlockSizeException
 					| BadPaddingException e) {e.printStackTrace();}
 		}
-		sb.append(String.valueOf(st));
+		sb.append(st);
 		sb.append("  					<div id=\"period0\" class=\"period\" value=\"null\">기간: " + pb.getStartDate().substring(0,10) + " ~ " + pb.getEndDate().substring(0,10) + "</div>\r\n"
 				+ "  					<div id=\"projectComment0\" class=\"projectComment\" value=\"null\">상세: " + pb.getProjectComment() + "</div>\r\n"
 				+ "  					<div id=\"projectComment0\" class=\"projectComment\" value=\"null\">모듈수: " + pb.getModules().size() + "</div>\r\n"
@@ -531,10 +526,6 @@ public class Management implements ServicesRule{
 		model.addAttribute("projectDetail", projectDetail);
 	}
 	
-	private void temp(ModelAndView mav) {
-		HashMap<String, String> map = new HashMap<String, String>();
-		map.put("projectCode", ((ProjectB)mav.getModel().get("projectB")).getProjectCode());
-	}
 	private void mainCtl(ModelAndView mav) {
 		System.out.println("Management/mainCtl");
 		
