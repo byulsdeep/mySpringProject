@@ -21,6 +21,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.mySpringProject.beans.AulB;
 import com.mySpringProject.beans.AuthB;
+import com.mySpringProject.beans.Points;
 import com.mySpringProject.beans.ProMemB;
 import com.mySpringProject.beans.ProjectB;
 import com.mySpringProject.inter.MapperInter;
@@ -110,11 +111,13 @@ public class Authentication implements ServicesRule{
 			if(dbData != null) {
 				ab.setAction(-1);
 				this.session.insert("insAsl", ab);
-				System.out.println("force LogOut");
+				System.out.println("force LogOut");	
 			}
 
-			ab.setAction(1);			
+			ab.setAction(1);	
+			
 			if(this.convertToBool(this.session.insert("insAsl",ab))){
+				
 				AuthB session = (AuthB)this.session.selectList("getAccessInfo", ab).get(0);
 				try {
 					session.setPmbName(this.enc.aesDecode(session.getPmbName(), session.getPmbCode()));
@@ -122,7 +125,7 @@ public class Authentication implements ServicesRule{
 					this.pu.setAttribute("accessInfo", session);
 					page = "main";
 					message = "Success";
-					
+
 					System.out.println("loginSuccess");
 				} catch (Exception e) {e.printStackTrace();}
 			} else {
@@ -134,6 +137,62 @@ public class Authentication implements ServicesRule{
 		mav.setViewName(page);
 	}
 
+	/*
+	 * 세션 확인
+	 *  T 접속 상태 확인
+	 *  	T 강제로그아웃
+	 * 		F 다음
+	 *  F 다음
+	 * 		
+	 * 로그 작성
+	 * 	T 포인트 적립/삭감
+	 *  F 관리자 호출
+	 * 세션 생성
+	 * 로그인완료
+	 * 
+	 * 로그아웃
+	 * 세션 확인
+	 *  T 접속 상태 확인
+	 * 		T 로그 작성
+	 * 		세션 삭제
+	 * */
+	
+	/*포인트 테이블
+	- 시간 단위
+
+	전날 주말/공휴일 확인
+	전날 로그아웃 여부확인 
+
+	적립/삭감 판단
+	- 0900 ~ 16:50 T/F
+	- 주말 T/F
+	- 공휴일 T/F
+
+	적립: 
+	퇴실
+	- 17:50 + 1시간
+	- 18:50 + 2시간
+	- 19:50 + 3시간
+	- 20:50 + 4시간
+
+	외출:
+
+	삭감: 
+	입실
+	- 09:01 -1시간
+	- 10:01 -2시간
+	- 11:01 -3시간
+	- 12:01 -4시간
+	- 13:01 -5시간
+	- 14:01 -6시간
+	- 15:01 -7시간
+	- 16:01 -8시간
+
+	로그아웃 안했을 경우
+	로그인 시 강제 로그아웃하면서 포인트 계산
+
+	09:00 ~ 21:00 ~ 다음날 09:00 -> 12시간 + 12시간 -> */
+	
 	@Transactional
 	private void accessOutCtl(ModelAndView mav) {
 		String page = "redirect:/";

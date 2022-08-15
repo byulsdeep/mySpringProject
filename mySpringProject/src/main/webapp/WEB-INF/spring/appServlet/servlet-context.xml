@@ -24,11 +24,10 @@
 	</beans:bean>
 	
 	<websocket:handlers>
-		<websocket:mapping handler="chatHandler" path="/chat" />
-		<websocket:sockjs />
+	<websocket:mapping handler="chattingHandler" path="/chatting"/>
+	<websocket:sockjs></websocket:sockjs>
 	</websocket:handlers>
-
-	<beans:bean id="chatHandler" class="com.mySpringProject.main.ChatHandler" />
+<beans:bean id="chattingHandler" class="com.mySpringProject.main.ChatHandler"/>
 	
 	<!-- Multipart Resolver -->
 	<beans:bean id="myMultipartResolver" class="org.springframework.web.multipart.support.StandardServletMultipartResolver"></beans:bean>

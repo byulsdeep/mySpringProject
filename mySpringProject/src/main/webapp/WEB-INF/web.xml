@@ -39,6 +39,7 @@
 			<param-name>encoding</param-name>
 			<param-value>UTF-8</param-value>
 		</init-param>
+		<async-supported>true</async-supported>
 		<!--  <init-param>
 			<param-name>forceEncoding</param-name>
 			<param-value>true</param-value>
